@@ -1,0 +1,6 @@
+smartgrids_store.storefront:
+  title: 'Shop'
+  description: 'Browse products, books, PDFs, movies, and digital items.'
+  route_name: smartgrids_store.storefront
+  menu_name: main
+  weight: 10

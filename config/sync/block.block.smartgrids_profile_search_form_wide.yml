@@ -1,0 +1,23 @@
+uuid: f485b3a4-0993-497b-933b-9915c714dfec
+langcode: en
+status: true
+dependencies:
+  module:
+    - search
+  theme:
+    - smartgrids_profile
+_core:
+  default_config_hash: pbbed0hdqGDF-_QWVVTWRAwgDIotFuAvWH5mWUZu0fA
+id: smartgrids_profile_search_form_wide
+theme: smartgrids_profile
+region: secondary_menu
+weight: -5
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: 'Search form (wide)'
+  label_display: '0'
+  provider: search
+  page_id: null
+visibility: {  }

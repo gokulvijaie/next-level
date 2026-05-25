@@ -1,0 +1,31 @@
+# Composer dependencies and generated Drupal scaffold.
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/profiles/contrib/
+/web/themes/contrib/
+/drush/Commands/contrib/
+
+# Local Drupal runtime files.
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/*/settings.php
+/web/sites/*/settings.local.php
+/web/sites/*/services.local.yml
+
+# Node dependencies and frontend build caches.
+node_modules/
+.npm/
+.yarn/
+
+# Environment and editor-local files.
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Logs and caches.
+*.log
+/.cache/
+/.phpunit.result.cache

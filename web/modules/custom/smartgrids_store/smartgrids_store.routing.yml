@@ -1,0 +1,7 @@
+smartgrids_store.storefront:
+  path: '/shop'
+  defaults:
+    _controller: '\Drupal\smartgrids_store\Controller\StorefrontController::storefront'
+    _title: 'Shop'
+  requirements:
+    _permission: 'access content'

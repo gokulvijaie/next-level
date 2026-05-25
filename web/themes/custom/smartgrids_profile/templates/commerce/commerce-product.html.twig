@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Smartgrids product detail page.
+ */
+#}
+{{ attach_library('smartgrids_store/storefront') }}
+
+{% set variation = product_entity.getDefaultVariation() %}
+{% set price = variation ? variation.getPrice() : '' %}
+{% set category = product_entity.hasField('field_store_category') and not product_entity.get('field_store_category').isEmpty() ? product_entity.get('field_store_category').value : 'Item' %}
+
+<article{{ attributes.addClass('smartgrids-product') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  <div class="smartgrids-product__media">
+    {% if product.field_product_image is defined and product.field_product_image|render|striptags|trim %}
+      {{ product.field_product_image }}
+    {% else %}
+      <div class="smartgrids-product__placeholder">{{ category|slice(0, 1)|upper }}</div>
+    {% endif %}
+  </div>
+
+  <div class="smartgrids-product__content">
+    <p class="smartgrids-product__category">{{ category }}</p>
+    <h1 class="smartgrids-product__title">{{ product_entity.label }}</h1>
+
+    {% if price %}
+      <p class="smartgrids-product__price">{{ price }}</p>
+    {% endif %}
+
+    {% if product.body is defined %}
+      <div class="smartgrids-product__body">
+        {{ product.body }}
+      </div>
+    {% endif %}
+
+    {% if product.field_digital_file is defined and product.field_digital_file|render|striptags|trim %}
+      <div class="smartgrids-product__digital">
+        {{ product.field_digital_file }}
+      </div>
+    {% endif %}
+
+    <div class="smartgrids-product__purchase">
+      {{ product.variations }}
+    </div>
+  </div>
+</article>

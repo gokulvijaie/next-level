@@ -1,0 +1,22 @@
+uuid: ae4737f6-194a-44ce-bfc3-66d1125bb3cb
+langcode: en
+status: true
+dependencies:
+  theme:
+    - smartgrids_profile
+_core:
+  default_config_hash: nGE3EoPQQaQCuqTUtZgw0-KIzmrqdKDzdNQf2JyPUt4
+id: smartgrids_profile_primary_local_tasks
+theme: smartgrids_profile
+region: highlighted
+weight: -4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Primary tabs'
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: false
+visibility: {  }

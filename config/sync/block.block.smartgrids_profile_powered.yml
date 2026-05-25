@@ -1,0 +1,22 @@
+uuid: 541e8df0-d554-48a6-b348-87fb3d8a36e1
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - smartgrids_profile
+_core:
+  default_config_hash: eYL19CLDyinGTWYQfBD1DswWzglEotE_kHnHx3AxTXM
+id: smartgrids_profile_powered
+theme: smartgrids_profile
+region: footer_bottom
+weight: 0
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  label_display: '0'
+  provider: system
+visibility: {  }

@@ -1,0 +1,15 @@
+name: Smartgrids Store
+type: module
+description: Provides a flexible ecommerce storefront for products, books, PDFs, movies, and digital content.
+package: Custom
+core_version_requirement: ^11
+dependencies:
+  - drupal:file
+  - drupal:image
+  - drupal:text
+  - commerce:commerce_cart
+  - commerce:commerce_checkout
+  - commerce:commerce_payment
+  - commerce:commerce_payment_example
+  - commerce:commerce_product
+  - commerce:commerce_store

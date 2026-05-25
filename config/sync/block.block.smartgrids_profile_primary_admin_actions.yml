@@ -1,0 +1,20 @@
+uuid: 7cb3643b-1c7c-43c3-a5b5-6e1601f57bbc
+langcode: en
+status: true
+dependencies:
+  theme:
+    - smartgrids_profile
+_core:
+  default_config_hash: Q9_2whdOj1YIomfvsIfopROW4FT_X5pY0DjdOiOaQ5U
+id: smartgrids_profile_primary_admin_actions
+theme: smartgrids_profile
+region: highlighted
+weight: -5
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }

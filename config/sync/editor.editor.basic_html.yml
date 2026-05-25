@@ -1,0 +1,109 @@
+uuid: 32ece7be-e95a-4d7a-abfe-e715bc7acd18
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+  module:
+    - ckeditor5
+_core:
+  default_config_hash: JrKgrmvARpUBMILom2cUF4pz3mwrBnCYSlHjGwsKZ64
+format: basic_html
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - aickeditor
+      - ai_balloon_menu
+      - numberedList
+      - '|'
+      - blockQuote
+      - drupalInsertImage
+      - '|'
+      - heading
+      - code
+      - '|'
+      - sourceEditing
+  plugins:
+    ai_ckeditor_ai:
+      dialog:
+        autoresize: 'min-width: 600px'
+        height: '750'
+        width: '900'
+        dialog_class: ai-ckeditor-modal
+      plugins:
+        ai_automators_ckeditor:
+          enabled: true
+          workflows: {  }
+        ai_ckeditor_completion:
+          enabled: true
+          provider: ollama__mistral_latest
+        ai_ckeditor_help:
+          enabled: true
+        ai_ckeditor_modify_prompt:
+          enabled: true
+          provider: ollama__mistral_latest
+        ai_ckeditor_reformat_html:
+          enabled: true
+          provider: ollama__mistral_latest
+        ai_ckeditor_spellfix:
+          enabled: true
+          provider: ollama__mistral_latest
+        ai_ckeditor_summarize:
+          enabled: false
+          provider: ollama__mistral_latest
+        ai_ckeditor_tone:
+          enabled: true
+          provider: ollama__mistral_latest
+          autocreate: false
+          tone_vocabulary: tags
+          use_description: false
+        ai_ckeditor_translate:
+          enabled: true
+          provider: ollama__mistral_latest
+          language_source: tax
+          autocreate: true
+          translate_vocabulary: tags
+          use_description: false
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4
+        - heading5
+        - heading6
+    ckeditor5_imageResize:
+      allow_resize: true
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: true
+        styles: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<cite>'
+        - '<dl>'
+        - '<dt>'
+        - '<dd>'
+        - '<a hreflang>'
+        - '<blockquote cite>'
+        - '<h2 id>'
+        - '<h3 id>'
+        - '<h4 id>'
+        - '<h5 id>'
+        - '<h6 id>'
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: null
+  max_dimensions:
+    width: null
+    height: null

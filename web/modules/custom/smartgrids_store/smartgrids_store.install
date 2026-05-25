@@ -1,0 +1,281 @@
+<?php
+
+/**
+ * @file
+ * Install helpers for Smartgrids Store.
+ */
+
+use Drupal\commerce_payment\Entity\PaymentGateway;
+use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\Product;
+use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\commerce_store\Entity\Store;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Creates a ready-to-use ecommerce demo setup.
+ */
+function smartgrids_store_install(): void {
+  smartgrids_store_create_product_fields();
+  $store = smartgrids_store_create_store();
+  smartgrids_store_create_payment_gateway();
+  smartgrids_store_create_sample_products($store);
+}
+
+/**
+ * Adds product fields for physical and digital content.
+ */
+function smartgrids_store_create_product_fields(): void {
+  $fields = [
+    'field_store_category' => [
+      'type' => 'list_string',
+      'label' => 'Category',
+      'storage_settings' => [
+        'allowed_values' => [
+          'book' => 'Book',
+          'pdf' => 'PDF',
+          'movie' => 'Movie',
+          'item' => 'Item',
+          'course' => 'Course',
+          'download' => 'Download',
+        ],
+      ],
+      'form' => [
+        'type' => 'options_select',
+        'weight' => 3,
+      ],
+      'view' => [
+        'type' => 'list_default',
+        'label' => 'above',
+        'weight' => -2,
+      ],
+    ],
+    'field_product_image' => [
+      'type' => 'image',
+      'label' => 'Product image',
+      'storage_settings' => [],
+      'field_settings' => [
+        'file_directory' => 'products',
+        'alt_field' => TRUE,
+        'alt_field_required' => FALSE,
+        'title_field' => FALSE,
+      ],
+      'form' => [
+        'type' => 'image_image',
+        'weight' => 4,
+        'settings' => [
+          'progress_indicator' => 'throbber',
+          'preview_image_style' => 'thumbnail',
+        ],
+      ],
+      'view' => [
+        'type' => 'image',
+        'label' => 'hidden',
+        'weight' => -3,
+        'settings' => [
+          'image_style' => 'medium',
+          'image_link' => '',
+          'image_loading' => ['attribute' => 'lazy'],
+        ],
+      ],
+    ],
+    'field_digital_file' => [
+      'type' => 'file',
+      'label' => 'Digital file',
+      'storage_settings' => [],
+      'field_settings' => [
+        'file_directory' => 'digital-products',
+        'file_extensions' => 'pdf zip mp4 mov epub doc docx',
+        'description_field' => TRUE,
+      ],
+      'form' => [
+        'type' => 'file_generic',
+        'weight' => 5,
+        'settings' => [
+          'progress_indicator' => 'throbber',
+        ],
+      ],
+      'view' => [
+        'type' => 'file_default',
+        'label' => 'above',
+        'weight' => 2,
+      ],
+    ],
+  ];
+
+  foreach ($fields as $field_name => $definition) {
+    if (!FieldStorageConfig::loadByName('commerce_product', $field_name)) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'commerce_product',
+        'type' => $definition['type'],
+        'cardinality' => 1,
+        'settings' => $definition['storage_settings'],
+      ])->save();
+    }
+
+    if (!FieldConfig::loadByName('commerce_product', 'default', $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'commerce_product',
+        'bundle' => 'default',
+        'label' => $definition['label'],
+        'required' => FALSE,
+        'settings' => $definition['field_settings'] ?? [],
+      ])->save();
+    }
+  }
+
+  $display_repository = \Drupal::service('entity_display.repository');
+  $form_display = $display_repository->getFormDisplay('commerce_product', 'default', 'default');
+  foreach ($fields as $field_name => $definition) {
+    $form_display->setComponent($field_name, [
+      'type' => $definition['form']['type'],
+      'weight' => $definition['form']['weight'],
+      'region' => 'content',
+      'settings' => $definition['form']['settings'] ?? [],
+      'third_party_settings' => [],
+    ]);
+  }
+  $form_display->save();
+
+  $view_display = $display_repository->getViewDisplay('commerce_product', 'default', 'default');
+  foreach ($fields as $field_name => $definition) {
+    $view_display->setComponent($field_name, [
+      'type' => $definition['view']['type'],
+      'label' => $definition['view']['label'],
+      'weight' => $definition['view']['weight'],
+      'region' => 'content',
+      'settings' => $definition['view']['settings'] ?? [],
+      'third_party_settings' => [],
+    ]);
+  }
+  $view_display->save();
+}
+
+/**
+ * Creates the default store.
+ */
+function smartgrids_store_create_store(): Store {
+  $storage = \Drupal::entityTypeManager()->getStorage('commerce_store');
+  $stores = $storage->loadMultiple();
+  if ($stores) {
+    return reset($stores);
+  }
+
+  $store = Store::create([
+    'type' => 'online',
+    'name' => 'Smartgrids Store',
+    'mail' => \Drupal::config('system.site')->get('mail') ?: 'store@example.com',
+    'default_currency' => 'USD',
+    'address' => [
+      'country_code' => 'US',
+      'administrative_area' => 'CA',
+      'locality' => 'San Francisco',
+      'postal_code' => '94105',
+      'address_line1' => '1 Market St',
+    ],
+    'status' => TRUE,
+  ]);
+  $store->save();
+
+  return $store;
+}
+
+/**
+ * Creates a test payment gateway for checkout.
+ */
+function smartgrids_store_create_payment_gateway(): void {
+  if (PaymentGateway::load('smartgrids_example')) {
+    return;
+  }
+
+  PaymentGateway::create([
+    'id' => 'smartgrids_example',
+    'label' => 'Example payment',
+    'weight' => 0,
+    'status' => TRUE,
+    'plugin' => 'example_onsite',
+    'configuration' => [
+      'api_key' => 'test',
+      'mode' => 'test',
+      'payment_method_types' => ['credit_card'],
+    ],
+    'conditions' => [],
+    'conditionOperator' => 'AND',
+  ])->save();
+}
+
+/**
+ * Creates starter products spanning multiple content types.
+ */
+function smartgrids_store_create_sample_products(Store $store): void {
+  $product_storage = \Drupal::entityTypeManager()->getStorage('commerce_product');
+  $existing = $product_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'default')
+    ->condition('title', 'Smart Grid Starter Book')
+    ->range(0, 1)
+    ->execute();
+  if ($existing) {
+    return;
+  }
+
+  $samples = [
+    [
+      'title' => 'Smart Grid Starter Book',
+      'sku' => 'BOOK-001',
+      'category' => 'book',
+      'price' => '24.00',
+      'body' => 'A practical guide for learning modern smart grid systems, distributed energy, and resilient infrastructure.',
+    ],
+    [
+      'title' => 'Renewable Energy PDF Pack',
+      'sku' => 'PDF-001',
+      'category' => 'pdf',
+      'price' => '9.00',
+      'body' => 'A downloadable PDF bundle with checklists, worksheets, and reference notes for renewable energy projects.',
+    ],
+    [
+      'title' => 'Grid Operations Movie',
+      'sku' => 'MOVIE-001',
+      'category' => 'movie',
+      'price' => '14.00',
+      'body' => 'A training video for understanding grid operations, monitoring workflows, and reliability practices.',
+    ],
+    [
+      'title' => 'Energy Monitor Device',
+      'sku' => 'ITEM-001',
+      'category' => 'item',
+      'price' => '79.00',
+      'body' => 'A physical device listing example for showing how the store can sell general items alongside digital content.',
+    ],
+  ];
+
+  foreach ($samples as $sample) {
+    $variation = ProductVariation::create([
+      'type' => 'default',
+      'sku' => $sample['sku'],
+      'title' => $sample['title'],
+      'price' => new Price($sample['price'], 'USD'),
+      'status' => TRUE,
+    ]);
+    $variation->save();
+
+    $product = Product::create([
+      'type' => 'default',
+      'title' => $sample['title'],
+      'stores' => [$store],
+      'variations' => [$variation],
+      'body' => [
+        'value' => $sample['body'],
+        'summary' => $sample['body'],
+        'format' => 'plain_text',
+      ],
+      'field_store_category' => $sample['category'],
+      'status' => TRUE,
+    ]);
+    $product->save();
+  }
+}

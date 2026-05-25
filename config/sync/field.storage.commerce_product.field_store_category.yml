@@ -1,0 +1,39 @@
+uuid: f5fabb9a-07c3-4ce2-a4f5-178c23903d9f
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - options
+id: commerce_product.field_store_category
+field_name: field_store_category
+entity_type: commerce_product
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: book
+      label: Book
+    -
+      value: pdf
+      label: PDF
+    -
+      value: movie
+      label: Movie
+    -
+      value: item
+      label: Item
+    -
+      value: course
+      label: Course
+    -
+      value: download
+      label: Download
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

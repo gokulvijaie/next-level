@@ -1,0 +1,4 @@
+profile:
+  css:
+    component:
+      css/dist/tailwind.css: {}

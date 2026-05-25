@@ -1,0 +1,27 @@
+_core:
+  default_config_hash: xBacXNIAeqGYsfpaWGL1l22dWVUT-YmLNlB3pdU0Czk
+prompt_logging: false
+prompt_logging_tags: ''
+default_providers:
+  chat:
+    provider_id: ollama
+    model_id: mistral_latest
+  chat_with_complex_json:
+    provider_id: ollama
+    model_id: mistral_latest
+  chat_with_image_vision:
+    provider_id: ollama
+    model_id: mistral_latest
+  chat_with_structured_response:
+    provider_id: ollama
+    model_id: mistral_latest
+  chat_with_tools:
+    provider_id: ollama
+    model_id: mistral_latest
+  embeddings:
+    provider_id: ollama
+    model_id: mistral_latest
+default_vdb_provider: ''
+request_timeout: 60
+allowed_hosts: {  }
+allowed_hosts_rewrite_links: false

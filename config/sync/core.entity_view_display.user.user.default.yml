@@ -64,3 +64,4 @@ hidden:
   commerce_remote_id: true
   customer_profiles: true
   field_age: true
+  langcode: true

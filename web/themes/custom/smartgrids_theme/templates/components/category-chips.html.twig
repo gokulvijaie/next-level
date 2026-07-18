@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Horizontally scrollable category chips (app-style category rail).
+ *
+ * Variables:
+ * - items: List of { label, url, active } items.
+ * - label: Accessible nav label, defaults to 'Product categories'.
+ *
+ * Usage — e.g. from a menu template or a taxonomy view:
+ * {% include '@smartgrids_theme/components/category-chips.html.twig' with {
+ *   items: chips,
+ * } only %}
+ */
+#}
+<nav class="sg-chips-wrapper" aria-label="{{ label|default('Product categories'|t) }}">
+  <div class="sg-chips">
+    {% for item in items %}
+      <a class="sg-chips__chip{{ item.active ? ' is-active' }}"
+        href="{{ item.url }}"
+        {{ item.active ? 'aria-current="page"' }}>{{ item.label }}</a>
+    {% endfor %}
+  </div>
+</nav>

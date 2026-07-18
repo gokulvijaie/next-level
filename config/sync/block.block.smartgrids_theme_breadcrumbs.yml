@@ -1,0 +1,22 @@
+uuid: f887239b-5e79-473b-ac02-a39ac921cc27
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - smartgrids_theme
+_core:
+  default_config_hash: VhBzWb7lMRtIOg9G7VSw_0uopi-7zXeHq4vXqqV1HFE
+id: smartgrids_theme_breadcrumbs
+theme: smartgrids_theme
+region: breadcrumb
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility: {  }

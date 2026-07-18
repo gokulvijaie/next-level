@@ -1,0 +1,22 @@
+uuid: f0c1081e-7c53-486e-8cce-082646db2dc8
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - smartgrids_theme
+_core:
+  default_config_hash: VfPFqqxfkomud5CO8DUijw85QIl9GIxh_nIxLOYESxg
+id: smartgrids_theme_help
+theme: smartgrids_theme
+region: header_top
+weight: 0
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

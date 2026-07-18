@@ -1,0 +1,66 @@
+/**
+ * SmartGrids — promotional banner component.
+ */
+
+.promo-banner {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 14rem;
+  padding: var(--sg-space-xl) var(--sg-space-lg);
+  border-radius: var(--sg-radius-lg);
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(120deg, #1e3a8a, #1d4ed8);
+}
+
+.promo-banner__media {
+  position: absolute;
+  inset: 0;
+}
+
+.promo-banner__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Scrim keeps text readable over any image. */
+.promo-banner__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.25));
+}
+
+.promo-banner__content {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  display: grid;
+  gap: var(--sg-space-sm);
+  justify-items: start;
+}
+
+.promo-banner__eyebrow {
+  font-size: var(--sg-font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.promo-banner__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.promo-banner__text {
+  margin: 0;
+}
+
+@media (min-width: 48em) {
+  .promo-banner {
+    min-height: 18rem;
+    padding: var(--sg-space-2xl);
+  }
+}

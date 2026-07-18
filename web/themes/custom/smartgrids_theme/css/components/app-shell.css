@@ -1,0 +1,128 @@
+/**
+ * SmartGrids — app shell: mobile bottom tab bar and category chip
+ * scroller. Together with the sticky header and swipe carousels these
+ * make the mobile experience feel like a native shopping app.
+ */
+
+/* --- Bottom tab bar (mobile only) ------------------------------------ */
+.sg-bottom-nav {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 70;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--sg-color-surface);
+  border-block-start: 1px solid var(--sg-color-border);
+  /* Respect the iOS home indicator. */
+  padding-block-end: env(safe-area-inset-bottom, 0);
+}
+
+.sg-bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  min-height: var(--sg-bottom-nav-height);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--sg-color-text-muted);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sg-bottom-nav__item:hover,
+.sg-bottom-nav__item.is-active {
+  color: var(--sg-color-primary);
+}
+
+.sg-bottom-nav__item:active {
+  transform: scale(0.94);
+}
+
+.sg-bottom-nav__item svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.sg-bottom-nav__badge {
+  position: absolute;
+  translate: 0.75rem -1.375rem;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding-inline: 0.2rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--sg-color-danger);
+  border-radius: 999px;
+}
+
+/* Reserve space so the tab bar never covers the footer. */
+@media (max-width: 63.99em) {
+  body {
+    padding-block-end: calc(var(--sg-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Desktop: the tab bar disappears; the header carries navigation. */
+@media (min-width: 64em) {
+  .sg-bottom-nav {
+    display: none;
+  }
+
+  body {
+    padding-block-end: 0;
+  }
+}
+
+/* --- Category chips scroller ----------------------------------------- */
+.sg-chips {
+  display: flex;
+  gap: var(--sg-space-xs);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-block: var(--sg-space-sm);
+  margin-inline: calc(-1 * var(--sg-space-md));
+  padding-inline: var(--sg-space-md);
+}
+
+.sg-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.sg-chips__chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding-inline: var(--sg-space-md);
+  font-size: var(--sg-font-size-sm);
+  font-weight: 600;
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface-alt);
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--sg-transition), color var(--sg-transition);
+}
+
+.sg-chips__chip:hover {
+  background: var(--sg-color-border);
+  color: var(--sg-color-text);
+}
+
+.sg-chips__chip.is-active {
+  color: var(--sg-color-primary-contrast);
+  background: var(--sg-color-primary);
+}

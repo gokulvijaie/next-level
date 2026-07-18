@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Rows for views tagged "product_carousel": each row (product teaser →
+ * product card) becomes a swiper slide. The surrounding .swiper container
+ * and navigation live in the product-carousel component included by
+ * views-view--product-carousel.html.twig.
+ */
+#}
+<div class="swiper-wrapper">
+  {% for row in rows %}
+    <div{{ row.attributes.addClass('swiper-slide') }}>
+      {{ row.content }}
+    </div>
+  {% endfor %}
+</div>

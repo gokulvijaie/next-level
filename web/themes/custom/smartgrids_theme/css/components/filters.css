@@ -1,0 +1,234 @@
+/**
+ * SmartGrids — product filters: exposed forms, facet groups, active chips,
+ * sort dropdown, mobile filter drawer.
+ */
+
+/* --- Toolbar above the grid (sort + result count + filter toggle) --- */
+.sg-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sg-space-sm);
+  padding-block: var(--sg-space-sm);
+  border-block-end: 1px solid var(--sg-color-border);
+  margin-block-end: var(--sg-space-md);
+}
+
+.sg-toolbar__count {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-sm);
+}
+
+/* Sort dropdown (Views exposed sort). */
+.sg-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-xs);
+}
+
+.sg-sort label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sg-sort select {
+  width: auto;
+}
+
+/* --- Filter sidebar / drawer ---------------------------------------- */
+.sg-filters__open {
+  display: inline-flex;
+}
+
+.sg-filters {
+  background: var(--sg-color-surface);
+}
+
+/* Mobile: off-canvas drawer. */
+@media (max-width: 63.99em) {
+  .sg-filters {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 90;
+    width: min(20rem, 90vw);
+    padding: var(--sg-space-md);
+    overflow-y: auto;
+    box-shadow: var(--sg-shadow-md);
+    translate: -100% 0;
+    visibility: hidden;
+    transition: translate 200ms ease, visibility 200ms;
+  }
+
+  .sg-filters.is-open {
+    translate: 0 0;
+    visibility: visible;
+  }
+}
+
+/* Desktop: static sidebar; the close button and backdrop disappear. */
+@media (min-width: 64em) {
+  .sg-filters__open,
+  .sg-filters__close,
+  .sg-filters-backdrop {
+    display: none;
+  }
+}
+
+.sg-filters-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(0 0 0 / 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 200ms;
+}
+
+.sg-filters-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sg-filters__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--sg-space-sm);
+}
+
+.sg-filters__header h2 {
+  margin: 0;
+  font-size: var(--sg-font-size-lg);
+}
+
+/* --- Filter groups (category, brand, availability, price) ----------- */
+.sg-filter-group {
+  padding-block: var(--sg-space-md);
+  border-block-end: 1px solid var(--sg-color-border);
+}
+
+.sg-filter-group > summary,
+.sg-filter-group__title {
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sg-filter-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sg-filter-group > summary::after {
+  content: "+";
+  font-size: var(--sg-font-size-lg);
+  color: var(--sg-color-text-muted);
+}
+
+.sg-filter-group[open] > summary::after {
+  content: "–";
+}
+
+.sg-filter-group .form-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-xs);
+  margin-block: var(--sg-space-xs);
+}
+
+.sg-filter-group .form-item label {
+  margin: 0;
+  font-weight: 400;
+}
+
+.sg-filter-group input[type="checkbox"],
+.sg-filter-group input[type="radio"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--sg-color-primary);
+}
+
+/* Price range: two inline number fields (Views "between" filter). */
+.sg-filter-price {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-xs);
+}
+
+.sg-filter-price input {
+  width: 5.5rem;
+}
+
+.sg-filter-price input[type="range"] {
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  accent-color: var(--sg-color-primary);
+}
+
+/* --- Active filter chips -------------------------------------------- */
+.sg-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-xs);
+  margin-block: var(--sg-space-sm);
+}
+
+.sg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-2xs);
+  min-height: 2rem;
+  padding-inline: var(--sg-space-sm) var(--sg-space-xs);
+  font-size: var(--sg-font-size-sm);
+  font-weight: 600;
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface-alt);
+  border: 1px solid var(--sg-color-border);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.sg-chip:hover {
+  border-color: var(--sg-color-danger);
+  color: var(--sg-color-danger);
+}
+
+.sg-chip__remove {
+  font-weight: 700;
+}
+
+.sg-clear-filters {
+  font-size: var(--sg-font-size-sm);
+  font-weight: 600;
+  color: var(--sg-color-danger);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: var(--sg-space-xs);
+}
+
+/* --- Views exposed form layout -------------------------------------- */
+.views-exposed-form .form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sg-space-sm);
+}
+
+.views-exposed-form .form-item {
+  margin-block: var(--sg-space-2xs);
+}
+
+.views-exposed-form .form-actions {
+  display: flex;
+  gap: var(--sg-space-xs);
+  margin-block: var(--sg-space-2xs);
+}

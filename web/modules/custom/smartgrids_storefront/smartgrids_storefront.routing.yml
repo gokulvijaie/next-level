@@ -1,0 +1,82 @@
+# GET endpoints serve only published/aggregated data — public.
+# POST endpoints verify the shared server secret inside the controller
+# (server-to-server from Next.js API routes only).
+smartgrids_storefront.rates:
+  path: '/api/storefront/rates'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::rates'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+
+smartgrids_storefront.stats:
+  path: '/api/storefront/stats'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::stats'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+
+smartgrids_storefront.catalog:
+  path: '/api/storefront/catalog'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::catalog'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+
+smartgrids_storefront.collection:
+  path: '/api/storefront/collections/{key}'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::collection'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+    key: '[a-z_]+'
+
+smartgrids_storefront.reviews:
+  path: '/api/storefront/reviews/{product}'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::reviews'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+    product: '[0-9a-f-]{36}'
+
+smartgrids_storefront.review_submit:
+  path: '/api/storefront/reviews'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::submitReview'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+smartgrids_storefront.review_vote:
+  path: '/api/storefront/reviews/vote'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::voteReview'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'
+
+smartgrids_storefront.notifications:
+  path: '/api/storefront/notifications'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\ApiController::notifications'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+
+smartgrids_storefront.download:
+  path: '/api/storefront/download'
+  defaults:
+    _controller: '\Drupal\smartgrids_storefront\Controller\DownloadController::download'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'

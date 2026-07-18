@@ -1,0 +1,5 @@
+name: 'SmartGrids Revalidate'
+type: module
+description: 'Pushes cache invalidations to the Next.js storefront when commerce content changes, keeping the decoupled frontend automatically in sync.'
+package: SmartGrids
+core_version_requirement: ^10.3 || ^11

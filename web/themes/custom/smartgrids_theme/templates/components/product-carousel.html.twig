@@ -1,0 +1,63 @@
+{#
+/**
+ * @file
+ * Reusable horizontal product carousel section (Swiper).
+ *
+ * Variables:
+ * - title: Section heading ('Trending now', 'Best sellers', ...).
+ * - more_url: Optional "View all" URL.
+ * - more_text: Optional link text (defaults to 'View all').
+ * - slides: A sequence of renderables; each becomes one swiper-slide.
+ *   Pass rendered product cards / teasers.
+ * - rows: Alternative to slides — a pre-built .swiper-wrapper renderable
+ *   (used by the Views integration, where the unformatted template
+ *   already outputs the wrapper + slides).
+ * - dense: If true, shows 5/6 slides on desktop instead of 4/5.
+ * - section_attributes: Optional Attribute object for the outer section.
+ *
+ * Usage:
+ * {% include '@smartgrids_theme/components/product-carousel.html.twig' with {
+ *   title: 'Trending now'|t,
+ *   more_url: path('view.product_catalog.page_1'),
+ *   slides: product_cards,
+ * } only %}
+ */
+#}
+{{ attach_library('smartgrids_theme/carousel') }}
+
+<section{{ (section_attributes ?: create_attribute()).addClass('sg-carousel-section') }}>
+  <header class="sg-carousel-section__header">
+    <h2 class="sg-carousel-section__title">{{ title }}</h2>
+    {% if more_url %}
+      <a class="sg-carousel-section__more" href="{{ more_url }}">
+        {{ more_text|default('View all'|t) }}
+        <span class="visually-hidden">: {{ title }}</span>
+      </a>
+    {% endif %}
+  </header>
+
+  <div class="sg-carousel" data-sg-carousel{{ dense ? ' data-sg-carousel-dense' }}>
+    <button type="button" class="sg-carousel__nav sg-carousel__nav--prev" data-sg-carousel-prev>
+      <span class="visually-hidden">{{ 'Previous products'|t }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+
+    <div class="swiper">
+      {% if rows %}
+        {{ rows }}
+      {% else %}
+        <div class="swiper-wrapper">
+          {% for slide in slides %}
+            <div class="swiper-slide">{{ slide }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <button type="button" class="sg-carousel__nav sg-carousel__nav--next" data-sg-carousel-next>
+      <span class="visually-hidden">{{ 'Next products'|t }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>

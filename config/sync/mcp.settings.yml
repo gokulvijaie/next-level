@@ -1,0 +1,8 @@
+_core:
+  default_config_hash: G1fP_Viz2F-TkFxY_7EWluwPcwl7bL3ZziTHtxYS4Tk
+enable_auth: false
+auth_settings: {  }
+plugins:
+  general:
+    enabled: true
+    config: {  }

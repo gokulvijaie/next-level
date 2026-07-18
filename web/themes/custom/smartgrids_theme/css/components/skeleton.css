@@ -1,0 +1,57 @@
+/**
+ * SmartGrids — loading skeleton cards.
+ * Render <div class="product-card product-card--skeleton" aria-hidden="true">
+ * placeholders (see templates/components/skeleton-card.html.twig) while
+ * results load, e.g. during AJAX-filtered Views refreshes.
+ */
+
+.product-card--skeleton {
+  pointer-events: none;
+}
+
+.sg-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--sg-color-surface-alt);
+  border-radius: var(--sg-radius-sm);
+  color: transparent;
+}
+
+.sg-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+  animation: sg-shimmer 1.4s infinite;
+}
+
+@keyframes sg-shimmer {
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.product-card--skeleton .product-card__media {
+  aspect-ratio: var(--sg-card-image-ratio);
+}
+
+.sg-skeleton--line {
+  height: 1em;
+  margin-block: 0.25em;
+}
+
+.sg-skeleton--line-short {
+  width: 60%;
+}
+
+.sg-skeleton--btn {
+  height: 2.75rem;
+  border-radius: var(--sg-radius-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-skeleton::after {
+    animation: none;
+  }
+}

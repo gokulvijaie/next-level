@@ -1,0 +1,59 @@
+/**
+ * SmartGrids — site footer.
+ */
+
+.site-footer {
+  margin-block-start: var(--sg-space-2xl);
+  background: var(--sg-color-text);
+  color: #e5e7eb;
+}
+
+.site-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.site-footer__regions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sg-space-lg);
+  padding-block: var(--sg-space-xl);
+}
+
+@media (min-width: 30em) {
+  .site-footer__regions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .site-footer__regions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.site-footer h2 {
+  font-size: var(--sg-font-size-base);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sg-space-2xs);
+}
+
+.site-footer__bottom {
+  border-block-start: 1px solid rgb(255 255 255 / 0.15);
+  padding-block: var(--sg-space-md);
+  font-size: var(--sg-font-size-sm);
+  text-align: center;
+}

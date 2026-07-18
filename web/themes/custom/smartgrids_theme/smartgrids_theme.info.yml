@@ -1,0 +1,31 @@
+name: SmartGrids
+type: theme
+description: 'Mobile-first e-commerce theme for Drupal Commerce. CSS Grid product layouts, accessible components, minimal JavaScript.'
+package: Custom
+core_version_requirement: ^10.3 || ^11
+base theme: stable9
+
+logo: logo.svg
+screenshot: screenshot.png
+
+libraries:
+  - smartgrids_theme/global
+
+regions:
+  header_top: 'Header top (utility bar)'
+  branding: 'Branding'
+  search: 'Search'
+  cart: 'Cart'
+  primary_menu: 'Primary menu'
+  banner: 'Promotional banner'
+  breadcrumb: 'Breadcrumb'
+  highlighted: 'Highlighted'
+  help: 'Help'
+  sidebar_filters: 'Sidebar (product filters)'
+  content: 'Content'
+  content_bottom: 'Content bottom (featured / new arrivals / sale)'
+  footer_first: 'Footer first'
+  footer_second: 'Footer second'
+  footer_third: 'Footer third'
+  footer_fourth: 'Footer fourth'
+  footer_bottom: 'Footer bottom'

@@ -15,16 +15,17 @@ mode: default
 content:
   address:
     type: address_default
-    weight: 1
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 1
     region: content
 hidden:
   billing_countries: true
   created: true
   default_currency: true
   is_default: true
+  langcode: true
   mail: true
   name: true
   timezone: true

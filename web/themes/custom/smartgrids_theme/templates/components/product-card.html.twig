@@ -1,0 +1,127 @@
+{#
+/**
+ * @file
+ * Reusable product card component.
+ *
+ * Registered as the 'smartgrids_product_card' theme hook (see
+ * smartgrids_theme.theme), so it can be rendered either way:
+ *
+ * 1. As a render array from PHP:
+ *    $build = ['#theme' => 'smartgrids_product_card', '#title' => ..., ...];
+ *
+ * 2. As a Twig include from any template:
+ *    {% include '@smartgrids_theme/components/product-card.html.twig' with {...} only %}
+ *
+ * Available variables:
+ * - url: Product URL (string or Url object rendered to string).
+ * - image: Render array (recommended: responsive_image formatter) or markup.
+ * - title: Product title (plain text — escaped automatically).
+ * - price: Formatted current price, e.g. '€39.00'.
+ * - original_price: Formatted list price when on sale.
+ * - discount_percent: Integer discount, e.g. 25.
+ * - category: Category label.
+ * - rating: Float 0–5.
+ * - review_count: Integer.
+ * - in_stock: Boolean.
+ * - badge: Translatable badge label ('Sale', 'New', 'Featured', ...).
+ * - badge_type: One of 'sale', 'new', 'featured', 'out-of-stock'.
+ * - add_to_cart: Render array of the Commerce add-to-cart form (optional).
+ * - product_id: Product ID for wishlist/quick-view data attributes.
+ * - attributes: Drupal Attribute object (optional).
+ * - image_url: Plain image URL used only by the quick-view modal (optional).
+ */
+#}
+{{ attach_library('smartgrids_theme/product-card') }}
+{{ attach_library('smartgrids_theme/quick-view') }}
+
+{% set card_classes = ['product-card', not in_stock ? 'product-card--unavailable']|filter(c => c) %}
+<article{{ (attributes ?: create_attribute()).addClass(card_classes) }}>
+
+  <div class="product-card__media">
+    {% if badge %}
+      <span class="product-card__badge product-card__badge--{{ badge_type|default('new') }}">{{ badge }}</span>
+    {% endif %}
+
+    {% if image %}
+      {{ image }}
+    {% else %}
+      {# Empty placeholder keeps the aspect-ratio box, preventing layout shift. #}
+      <span class="sg-visually-hidden">{{ 'No image available'|t }}</span>
+    {% endif %}
+
+    <div class="product-card__actions">
+      <button type="button"
+        class="sg-icon-btn product-card__wishlist"
+        aria-pressed="false"
+        data-sg-wishlist="{{ product_id }}"
+        data-sg-title="{{ title }}">
+        <span class="visually-hidden">{{ 'Add @title to wishlist'|t({'@title': title}) }}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21C7 16.5 3 13.2 3 9.1 3 6.3 5.2 4 8 4c1.6 0 3.1.8 4 2 .9-1.2 2.4-2 4-2 2.8 0 5 2.3 5 5.1 0 4.1-4 7.4-9 11.9z"/></svg>
+      </button>
+      <button type="button"
+        class="sg-icon-btn product-card__quick-view"
+        data-sg-quick-view
+        data-sg-title="{{ title }}"
+        data-sg-price="{{ price }}"
+        data-sg-url="{{ url }}"
+        data-sg-image="{{ image_url|default('') }}">
+        <span class="visually-hidden">{{ 'Quick view of @title'|t({'@title': title}) }}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="product-card__body">
+    {% if category %}
+      <p class="product-card__category">{{ category }}</p>
+    {% endif %}
+
+    <h3 class="product-card__title">
+      <a href="{{ url }}">{{ title }}</a>
+    </h3>
+
+    {% if rating is not null %}
+      <div class="product-card__rating">
+        <span class="sg-stars" role="img"
+          aria-label="{{ 'Rated @rating out of 5 stars'|t({'@rating': rating}) }}">
+          <span class="sg-stars__fill" style="width: {{ (rating / 5 * 100)|round }}%"></span>
+        </span>
+        {% if review_count is not null %}
+          <span>
+            {% trans %}{{ review_count }} review{% plural review_count %}{{ review_count }} reviews{% endtrans %}
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="product-card__price-row">
+      {% if price %}
+        <span class="product-card__price{{ original_price ? ' product-card__price--sale' }}">{{ price }}</span>
+      {% endif %}
+      {% if original_price %}
+        <s class="product-card__price-original">
+          <span class="visually-hidden">{{ 'Original price:'|t }}</span> {{ original_price }}
+        </s>
+      {% endif %}
+      {% if discount_percent %}
+        <span class="product-card__discount">{{ '@percent% off'|t({'@percent': discount_percent}) }}</span>
+      {% endif %}
+    </div>
+
+    <p class="product-card__stock{{ not in_stock ? ' product-card__stock--out' }}">
+      {{ in_stock ? 'In stock'|t : 'Out of stock'|t }}
+    </p>
+  </div>
+
+  <div class="product-card__footer">
+    {% if add_to_cart %}
+      {{ add_to_cart }}
+    {% elseif in_stock %}
+      <a class="sg-btn" href="{{ url }}">
+        {{ 'View product'|t }}<span class="visually-hidden">: {{ title }}</span>
+      </a>
+    {% else %}
+      <button type="button" class="sg-btn" disabled>{{ 'Out of stock'|t }}</button>
+    {% endif %}
+  </div>
+</article>

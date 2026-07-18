@@ -1,0 +1,348 @@
+<?php
+
+/**
+ * @file
+ * Theme functions and preprocessing for the SmartGrids theme.
+ */
+
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ *
+ * Registers the reusable product card so it can be built as a render array
+ * (['#theme' => 'smartgrids_product_card', ...]) from any module, block or
+ * preprocess function, in addition to being used as a Twig include.
+ */
+function smartgrids_theme_theme($existing, $type, $theme, $path) {
+  return [
+    'smartgrids_product_card' => [
+      'variables' => [
+        'url' => NULL,
+        'image' => NULL,
+        'title' => NULL,
+        'price' => NULL,
+        'original_price' => NULL,
+        'discount_percent' => NULL,
+        'category' => NULL,
+        'rating' => NULL,
+        'review_count' => NULL,
+        'in_stock' => TRUE,
+        'badge' => NULL,
+        'badge_type' => NULL,
+        'add_to_cart' => NULL,
+        'product_id' => NULL,
+        'attributes' => NULL,
+      ],
+      'template' => 'product-card',
+      'path' => $path . '/templates/components',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function smartgrids_theme_preprocess_html(array &$variables) {
+  // Route-based body class, useful for page-specific styling.
+  $route = \Drupal::routeMatch()->getRouteName();
+  if ($route) {
+    $variables['attributes']['class'][] = 'route--' . Drupal\Component\Utility\Html::getClass($route);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page.html.twig.
+ */
+function smartgrids_theme_preprocess_page(array &$variables) {
+  // Expose a cache-safe front page URL for the logo link.
+  $variables['front_page_url'] = Url::fromRoute('<front>')->toString();
+
+  // Mobile bottom tab bar items (templates/components/bottom-nav.html.twig).
+  // The '/shop' and '/wishlist' paths match the catalogue view and wishlist
+  // page suggested in the README; adjust to your routes.
+  $route = \Drupal::routeMatch()->getRouteName();
+  $items = [
+    [
+      'title' => t('Home'),
+      'url' => Url::fromRoute('<front>')->toString(),
+      'icon' => 'home',
+      'active' => \Drupal::service('path.matcher')->isFrontPage(),
+    ],
+    [
+      'title' => t('Shop'),
+      'url' => Url::fromUserInput('/shop')->toString(),
+      'icon' => 'shop',
+      'active' => $route === 'view.product_catalog.page_1',
+    ],
+    [
+      'title' => t('Wishlist'),
+      'url' => Url::fromUserInput('/wishlist')->toString(),
+      'icon' => 'wishlist',
+      'active' => $route === 'view.wishlist.page_1',
+    ],
+  ];
+  if (\Drupal::moduleHandler()->moduleExists('commerce_cart')) {
+    $items[] = [
+      'title' => t('Cart'),
+      'url' => Url::fromRoute('commerce_cart.page')->toString(),
+      'icon' => 'cart',
+      'active' => $route === 'commerce_cart.page',
+    ];
+  }
+  $items[] = [
+    'title' => t('Account'),
+    'url' => Url::fromRoute('user.page')->toString(),
+    'icon' => 'account',
+    'active' => str_starts_with($route ?? '', 'user.'),
+  ];
+  $variables['app_nav'] = $items;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for commerce_product.
+ *
+ * Adds per-view-mode and per-bundle template suggestions, e.g.
+ * commerce-product--teaser.html.twig, commerce-product--default--teaser.html.twig.
+ */
+function smartgrids_theme_theme_suggestions_commerce_product_alter(array &$suggestions, array $variables) {
+  if (isset($variables['elements']['#view_mode'])) {
+    $view_mode = $variables['elements']['#view_mode'];
+    $product = $variables['elements']['#commerce_product'] ?? NULL;
+    $suggestions[] = 'commerce_product__' . $view_mode;
+    if ($product instanceof ProductInterface) {
+      $suggestions[] = 'commerce_product__' . $product->bundle() . '__' . $view_mode;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for commerce-product.html.twig.
+ *
+ * Computes every variable the product card component needs. All values are
+ * derived from the product entity, which is already a cacheable dependency of
+ * this render array, so no extra cache metadata is required.
+ */
+function smartgrids_theme_preprocess_commerce_product(array &$variables) {
+  /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
+  $product = $variables['product_entity'] ?? $variables['elements']['#commerce_product'] ?? NULL;
+  if (!$product instanceof ProductInterface) {
+    return;
+  }
+
+  $variables['view_mode'] = $variables['elements']['#view_mode'] ?? 'full';
+  $variables['product_url'] = $product->toUrl()->toString();
+
+  $card = [
+    'url' => $variables['product_url'],
+    'title' => $product->label(),
+    'product_id' => $product->id(),
+    'in_stock' => TRUE,
+    'price' => NULL,
+    'original_price' => NULL,
+    'discount_percent' => NULL,
+    'category' => NULL,
+    'rating' => NULL,
+    'review_count' => NULL,
+    'badge' => NULL,
+    'badge_type' => NULL,
+  ];
+
+  $variation = $product->getDefaultVariation();
+  if ($variation) {
+    /** @var \Drupal\commerce_price\CurrencyFormatterInterface $formatter */
+    $formatter = \Drupal::service('commerce_price.currency_formatter');
+
+    $price = $variation->getPrice();
+    $list_price = $variation->getListPrice();
+
+    if ($price) {
+      $card['price'] = $formatter->format($price->getNumber(), $price->getCurrencyCode());
+    }
+    // A list price higher than the current price means the product is on sale.
+    if ($price && $list_price && $list_price->greaterThan($price)) {
+      $card['original_price'] = $formatter->format($list_price->getNumber(), $list_price->getCurrencyCode());
+      $card['discount_percent'] = (int) round(
+        (1 - ((float) $price->getNumber() / (float) $list_price->getNumber())) * 100
+      );
+      $card['badge'] = t('Sale');
+      $card['badge_type'] = 'sale';
+    }
+
+    // Stock: supports commerce_stock or a plain "field_stock" integer field.
+    if ($variation->hasField('field_stock') && !$variation->get('field_stock')->isEmpty()) {
+      $card['in_stock'] = (int) $variation->get('field_stock')->value > 0;
+    }
+  }
+
+  // Category label from the first term on field_product_category (or
+  // field_category as a fallback). Adjust to your field names.
+  foreach (['field_product_category', 'field_category'] as $field) {
+    if ($product->hasField($field) && !$product->get($field)->isEmpty()) {
+      $term = $product->get($field)->entity;
+      if ($term) {
+        $card['category'] = $term->label();
+      }
+      break;
+    }
+  }
+
+  // Star rating / review count (e.g. provided by a Fivestar or custom field).
+  if ($product->hasField('field_rating') && !$product->get('field_rating')->isEmpty()) {
+    $card['rating'] = (float) $product->get('field_rating')->value;
+  }
+  if ($product->hasField('field_review_count') && !$product->get('field_review_count')->isEmpty()) {
+    $card['review_count'] = (int) $product->get('field_review_count')->value;
+  }
+
+  // Badge priority: Out of stock > Sale > Featured > New (last 30 days).
+  if (!$card['in_stock']) {
+    $card['badge'] = t('Out of stock');
+    $card['badge_type'] = 'out-of-stock';
+  }
+  elseif (!$card['badge']) {
+    if ($product->hasField('field_featured') && (bool) $product->get('field_featured')->value) {
+      $card['badge'] = t('Featured');
+      $card['badge_type'] = 'featured';
+    }
+    elseif ($product->getCreatedTime() > \Drupal::time()->getRequestTime() - 30 * 86400) {
+      $card['badge'] = t('New');
+      $card['badge_type'] = 'new';
+    }
+  }
+
+  $variables['card'] = $card;
+
+  // Attributes object for the card wrapper, so modules can still alter it.
+  $variables['card_attributes'] = new Attribute([
+    'class' => ['product-card'],
+  ]);
+
+  // On full product pages, feed the client-side "Recently viewed" rail.
+  // The data rides on the product's render array, so caching stays correct.
+  if ($variables['view_mode'] === 'full') {
+    $image_url = '';
+    foreach (['field_product_image', 'field_image'] as $image_field) {
+      if ($product->hasField($image_field) && !$product->get($image_field)->isEmpty()) {
+        $file = $product->get($image_field)->entity;
+        if ($file) {
+          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('medium');
+          $image_url = $style
+            ? \Drupal::service('file_url_generator')->transformRelative($style->buildUrl($file->getFileUri()))
+            : \Drupal::service('file_url_generator')->generateString($file->getFileUri());
+        }
+        break;
+      }
+    }
+    $variables['#attached']['library'][] = 'smartgrids_theme/recently-viewed';
+    $variables['#attached']['drupalSettings']['smartgrids']['product'] = [
+      'id' => (string) $product->id(),
+      'title' => $product->label(),
+      'url' => $card['url'],
+      'price' => (string) ($card['price'] ?? ''),
+      'image' => $image_url,
+    ];
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for views_view_unformatted.
+ *
+ * Any view tagged "product_grid" (Views UI: Other > Tags) shares one grid
+ * template: views-view-unformatted--product-grid.html.twig. This avoids one
+ * template file per view.
+ */
+function smartgrids_theme_theme_suggestions_views_view_unformatted_alter(array &$suggestions, array $variables) {
+  $view = $variables['view'];
+  $tag = $view->storage->get('tag') ?? '';
+  if (strpos($tag, 'product_carousel') !== FALSE) {
+    $suggestions[] = 'views_view_unformatted__product_carousel';
+  }
+  elseif (strpos($tag, 'product_grid') !== FALSE) {
+    $suggestions[] = 'views_view_unformatted__product_grid';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for views_view.
+ */
+function smartgrids_theme_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+  $view = $variables['view'];
+  $tag = $view->storage->get('tag') ?? '';
+  if (strpos($tag, 'product_carousel') !== FALSE) {
+    $suggestions[] = 'views_view__product_carousel';
+  }
+  elseif (strpos($tag, 'product_grid') !== FALSE) {
+    $suggestions[] = 'views_view__product_grid';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-view.html.twig.
+ */
+function smartgrids_theme_preprocess_views_view(array &$variables) {
+  $view = $variables['view'];
+  $tag = $view->storage->get('tag') ?? '';
+  if (strpos($tag, 'product_carousel') !== FALSE) {
+    $variables['#attached']['library'][] = 'smartgrids_theme/carousel';
+  }
+  elseif (strpos($tag, 'product_grid') !== FALSE) {
+    $variables['#attached']['library'][] = 'smartgrids_theme/product-grid';
+    $variables['#attached']['library'][] = 'smartgrids_theme/filters';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for blocks.
+ */
+function smartgrids_theme_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  // Give the Commerce cart block its own suggestion.
+  if (($variables['elements']['#plugin_id'] ?? '') === 'commerce_cart') {
+    $suggestions[] = 'block__smartgrids_cart';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block templates.
+ */
+function smartgrids_theme_preprocess_block(array &$variables) {
+  if (($variables['elements']['#plugin_id'] ?? '') === 'commerce_cart') {
+    $variables['#attached']['library'][] = 'smartgrids_theme/cart';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for views-exposed-form templates.
+ */
+function smartgrids_theme_preprocess_views_exposed_form(array &$variables) {
+  $variables['#attached']['library'][] = 'smartgrids_theme/filters';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the core search block form.
+ */
+function smartgrids_theme_form_search_block_form_alter(array &$form) {
+  $form['#attributes']['class'][] = 'sg-search-form';
+  $form['keys']['#attributes']['placeholder'] = t('Search products…');
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Applies the same search styling to Views exposed search forms whose ID
+ * starts with the product search view.
+ */
+function smartgrids_theme_form_alter(array &$form, $form_state, $form_id) {
+  if ($form_id === 'views_exposed_form' && ($form['#id'] ?? '') === 'views-exposed-form-product-search-page') {
+    $form['#attributes']['class'][] = 'sg-search-form';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu--main.html.twig.
+ */
+function smartgrids_theme_preprocess_menu__main(array &$variables) {
+  $variables['attributes']['class'][] = 'main-nav__menu';
+}

@@ -1,0 +1,101 @@
+/**
+ * SmartGrids — responsive product grid.
+ * 1 / 2 / 3 / 4 / 5-6 columns, mobile-first, CSS Grid.
+ */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sg-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Larger phones */
+@media (min-width: 30em) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Tablets */
+@media (min-width: 48em) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sg-space-lg);
+  }
+}
+
+/* Desktop */
+@media (min-width: 64em) {
+  .product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Large desktop: 5 columns by default, 6 with .product-grid--dense. */
+@media (min-width: 80em) {
+  .product-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .product-grid--dense {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* With the filter sidebar taking a column, drop one column of products. */
+@media (min-width: 64em) {
+  .sg-layout--with-sidebar .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80em) {
+  .sg-layout--with-sidebar .product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.product-grid > * {
+  min-width: 0; /* long content must not blow out the track */
+}
+
+/* Views wrapper */
+.product-grid-view .view-content {
+  margin-block: var(--sg-space-md);
+}
+
+.product-grid-view .view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sg-space-md);
+  flex-wrap: wrap;
+}
+
+/* --- Empty results state -------------------------------------------- */
+.product-grid-empty {
+  display: grid;
+  place-items: center;
+  gap: var(--sg-space-sm);
+  padding: var(--sg-space-2xl) var(--sg-space-md);
+  text-align: center;
+  background: var(--sg-color-surface-alt);
+  border-radius: var(--sg-radius-lg);
+}
+
+.product-grid-empty__icon {
+  font-size: 2.5rem;
+}
+
+.product-grid-empty__title {
+  margin: 0;
+}
+
+.product-grid-empty__text {
+  color: var(--sg-color-text-muted);
+  margin: 0;
+  max-width: 32rem;
+}

@@ -1,0 +1,162 @@
+<?php
+
+/**
+ * @file
+ * Notifies the Next.js storefront when relevant content changes.
+ *
+ * The notification is DEFERRED to a shutdown function that runs after the
+ * response is sent. This is important: firing the webhook synchronously
+ * inside the entity save hook races Drupal's own cache invalidation — the
+ * storefront would re-fetch JSON:API before Drupal cleared its response
+ * cache and re-prime itself with stale data. By the time the shutdown
+ * function runs, Drupal's cache tags are invalidated, so the storefront's
+ * re-fetch returns fresh content.
+ *
+ * Multiple entity saves in one request are batched into a single call.
+ *
+ * Configuration in settings.php:
+ * @code
+ * $settings['smartgrids_frontend_url'] = 'https://shop.example.com';
+ * $settings['smartgrids_revalidate_secret'] = 'a-long-random-secret';
+ * @endcode
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Site\Settings;
+
+/**
+ * Cache TAGS the frontend uses, keyed by what changed.
+ */
+function _smartgrids_revalidate_tags(EntityInterface $entity): array {
+  return match ($entity->getEntityTypeId()) {
+    'commerce_product', 'commerce_product_variation' => [
+      'products',
+      'product:' . $entity->uuid(),
+    ],
+    'taxonomy_term' => ['categories', 'products'],
+    'node' => $entity->bundle() === 'section' ? ['sections'] : [],
+    default => [],
+  };
+}
+
+/**
+ * Frontend PATHS an entity affects (belt-and-suspenders alongside tags).
+ *
+ * The product path uses the UUID slug because the storefront routes
+ * products as /product/<uuid> (no Drupal alias).
+ */
+function _smartgrids_revalidate_paths(EntityInterface $entity): array {
+  switch ($entity->getEntityTypeId()) {
+    case 'commerce_product':
+      return ['/', '/shop', '/product/' . $entity->uuid()];
+
+    case 'commerce_product_variation':
+      $paths = ['/', '/shop'];
+      /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $entity */
+      $product = $entity->getProduct();
+      if ($product) {
+        $paths[] = '/product/' . $product->uuid();
+      }
+      return $paths;
+
+    case 'taxonomy_term':
+      return ['/', '/shop'];
+
+    case 'node':
+      return $entity->bundle() === 'section' ? ['/'] : [];
+
+    default:
+      return [];
+  }
+}
+
+/**
+ * Public API: queue a storefront invalidation from any module.
+ *
+ * Batched with all other invalidations in the request and flushed at
+ * shutdown (after Drupal's own caches are cleared).
+ */
+function smartgrids_revalidate_send(array $tags, array $paths = []): void {
+  if (!$tags && !$paths) {
+    return;
+  }
+  $queue = &drupal_static('smartgrids_revalidate_queue', ['tags' => [], 'paths' => []]);
+  $queue['tags'] = array_values(array_unique([...$queue['tags'], ...$tags]));
+  $queue['paths'] = array_values(array_unique([...$queue['paths'], ...$paths]));
+
+  $registered = &drupal_static('smartgrids_revalidate_registered', FALSE);
+  if (!$registered) {
+    drupal_register_shutdown_function('_smartgrids_revalidate_flush');
+    $registered = TRUE;
+  }
+}
+
+/**
+ * Collects invalidations for the current request and registers the flush.
+ */
+function _smartgrids_revalidate_collect(EntityInterface $entity): void {
+  $tags = _smartgrids_revalidate_tags($entity);
+  if (!$tags) {
+    return;
+  }
+  smartgrids_revalidate_send($tags, _smartgrids_revalidate_paths($entity));
+}
+
+/**
+ * Sends the batched invalidation to the Next.js /api/revalidate endpoint.
+ *
+ * Runs at shutdown, after Drupal has invalidated its own caches, so the
+ * storefront's re-fetch is guaranteed to see fresh content.
+ */
+function _smartgrids_revalidate_flush(): void {
+  $queue = &drupal_static('smartgrids_revalidate_queue', ['tags' => [], 'paths' => []]);
+  if (empty($queue['tags'])) {
+    return;
+  }
+
+  $frontend = Settings::get('smartgrids_frontend_url');
+  $secret = Settings::get('smartgrids_revalidate_secret');
+  if (!$frontend || !$secret) {
+    return;
+  }
+
+  try {
+    \Drupal::httpClient()->post(rtrim($frontend, '/') . '/api/revalidate', [
+      'headers' => [
+        'Content-Type' => 'application/json',
+        'x-revalidate-secret' => $secret,
+      ],
+      'json' => ['tags' => $queue['tags'], 'paths' => $queue['paths']],
+      // Never hang the process on a slow/unreachable frontend.
+      'timeout' => 5,
+    ]);
+  }
+  catch (\Throwable $e) {
+    // Non-fatal: the storefront's time-based ISR fallback (1h) still
+    // reconciles the change. Logged for observability.
+    \Drupal::logger('smartgrids_revalidate')->warning('Revalidation ping failed: @message', [
+      '@message' => $e->getMessage(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function smartgrids_revalidate_entity_insert(EntityInterface $entity): void {
+  _smartgrids_revalidate_collect($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function smartgrids_revalidate_entity_update(EntityInterface $entity): void {
+  _smartgrids_revalidate_collect($entity);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function smartgrids_revalidate_entity_delete(EntityInterface $entity): void {
+  _smartgrids_revalidate_collect($entity);
+}

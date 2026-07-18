@@ -1,0 +1,73 @@
+/**
+ * SmartGrids — cart page/form and quantity stepper.
+ */
+
+.cart-form table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart-form th,
+.cart-form td {
+  padding: var(--sg-space-sm);
+  text-align: start;
+  border-block-end: 1px solid var(--sg-color-border);
+}
+
+.cart-form img {
+  border-radius: var(--sg-radius-sm);
+}
+
+/* Quantity stepper: JS (js/quantity.js) wraps number inputs with – / +
+   buttons. */
+.sg-qty {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-md);
+  overflow: hidden;
+}
+
+.sg-qty input[type="number"] {
+  width: 3.5rem;
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.sg-qty input[type="number"]::-webkit-outer-spin-button,
+.sg-qty input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.sg-qty__btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface-alt);
+  border: 0;
+  cursor: pointer;
+}
+
+.sg-qty__btn:hover {
+  background: var(--sg-color-border);
+}
+
+/* Order summary */
+.order-total-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sg-space-md);
+  padding-block: var(--sg-space-2xs);
+}
+
+.order-total-line__total {
+  font-weight: 700;
+  font-size: var(--sg-font-size-lg);
+}

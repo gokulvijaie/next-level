@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * Validation, notification generation and cron for the storefront.
+ */
+
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\Component\Utility\Html;
+
+/**
+ * Inserts a broadcast notification (uid 0 = visible to all shoppers).
+ */
+function smartgrids_storefront_notify(string $type, string $title, string $body = '', string $url = '', string $product_uuid = '', int $uid = 0): void {
+  // Debounce: skip if an identical notification was created recently.
+  $recent = \Drupal::database()->select('smartgrids_notification', 'n')
+    ->condition('type', $type)
+    ->condition('product_uuid', $product_uuid)
+    ->condition('created', \Drupal::time()->getRequestTime() - 3600, '>')
+    ->countQuery()->execute()->fetchField();
+  if ($product_uuid && $recent > 0) {
+    return;
+  }
+  \Drupal::database()->insert('smartgrids_notification')->fields([
+    'uuid' => \Drupal::service('uuid')->generate(),
+    'uid' => $uid,
+    'type' => $type,
+    'title' => mb_substr($title, 0, 255),
+    'body' => $body,
+    'url' => mb_substr($url, 0, 255),
+    'product_uuid' => $product_uuid,
+    'created' => \Drupal::time()->getRequestTime(),
+  ])->execute();
+
+  if (function_exists('smartgrids_revalidate_send')) {
+    smartgrids_revalidate_send(['notifications'], []);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for commerce_product_variation.
+ *
+ * Backend price validation — Drupal is the source of truth, so bad data is
+ * corrected here, before it can ever reach the API:
+ * - prices cannot be negative,
+ * - the sale price (price) cannot exceed the regular price (list_price),
+ * - the sale window must be chronologically valid.
+ * Also generates price-drop and back-in-stock notifications.
+ */
+function smartgrids_storefront_commerce_product_variation_presave(ProductVariationInterface $variation): void {
+  $logger = \Drupal::logger('smartgrids_storefront');
+
+  // Non-negative prices on every price field.
+  foreach (['price', 'list_price', 'field_subscription_price', 'field_download_price'] as $field) {
+    if ($variation->hasField($field) && !$variation->get($field)->isEmpty()) {
+      /** @var \Drupal\commerce_price\Price $price */
+      $price = $variation->get($field)->first()->toPrice();
+      if ($price->isNegative()) {
+        $variation->set($field, ['number' => '0', 'currency_code' => $price->getCurrencyCode()]);
+        $logger->warning('Negative @field on variation @sku clamped to 0.', ['@field' => $field, '@sku' => $variation->getSku()]);
+      }
+    }
+  }
+
+  // Sale price must not exceed the regular (list) price.
+  $price = $variation->getPrice();
+  $list = $variation->getListPrice();
+  if ($price && $list && $price->greaterThan($list)) {
+    $variation->set('list_price', NULL);
+    $logger->warning('Sale price above regular price on @sku — sale removed.', ['@sku' => $variation->getSku()]);
+  }
+
+  // Sale window sanity: end must be after start.
+  if ($variation->hasField('field_sale_start') && $variation->hasField('field_sale_end')) {
+    $start = $variation->get('field_sale_start')->value;
+    $end = $variation->get('field_sale_end')->value;
+    if ($start && $end && $end < $start) {
+      $variation->set('field_sale_end', NULL);
+      $logger->warning('Sale end before start on @sku — end date cleared.', ['@sku' => $variation->getSku()]);
+    }
+  }
+
+  // Notifications need the previous values (updates only). Drupal 11.2+
+  // deprecates the magic ->original property in favour of getOriginal().
+  /** @var \Drupal\commerce_product\Entity\ProductVariationInterface|null $original */
+  $original = method_exists($variation, 'getOriginal')
+    ? $variation->getOriginal()
+    : ($variation->original ?? NULL);
+  if (!$original) {
+    return;
+  }
+  $product = $variation->getProduct();
+  if (!$product instanceof ProductInterface || !$product->isPublished()) {
+    return;
+  }
+  $url = '/product/' . $product->uuid();
+
+  // Price reduction.
+  $old = $original->getPrice();
+  $new = $variation->getPrice();
+  if ($old && $new && $new->lessThan($old)) {
+    smartgrids_storefront_notify(
+      'price_drop',
+      t('Price drop: @title', ['@title' => $product->label()]),
+      t('Now @new (was @old).', ['@new' => $new, '@old' => $old]),
+      $url,
+      $product->uuid(),
+    );
+  }
+
+  // Back in stock.
+  if ($variation->hasField('field_stock')) {
+    $old_stock = (int) ($original->get('field_stock')->value ?? 0);
+    $new_stock = (int) ($variation->get('field_stock')->value ?? 0);
+    if ($old_stock <= 0 && $new_stock > 0) {
+      smartgrids_storefront_notify(
+        'restock',
+        t('Back in stock: @title', ['@title' => $product->label()]),
+        '',
+        $url,
+        $product->uuid(),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for commerce_product.
+ */
+function smartgrids_storefront_commerce_product_insert(ProductInterface $product): void {
+  if ($product->isPublished()) {
+    smartgrids_storefront_notify(
+      'new_product',
+      t('New arrival: @title', ['@title' => Html::decodeEntities($product->label())]),
+      '',
+      '/product/' . $product->uuid(),
+      $product->uuid(),
+    );
+  }
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Refreshes exchange rates on the configured interval. On failure the
+ * previously stored rates keep serving (marked stale in the API).
+ */
+function smartgrids_storefront_cron(): void {
+  $state = \Drupal::state();
+  $interval = (int) \Drupal::config('smartgrids_storefront.settings')->get('rates_refresh_seconds') ?: 21600;
+  $last = (int) $state->get('smartgrids_storefront.rates_refreshed', 0);
+  if (\Drupal::time()->getRequestTime() - $last >= $interval) {
+    \Drupal::service('smartgrids_storefront.rates')->refresh();
+    $state->set('smartgrids_storefront.rates_refreshed', \Drupal::time()->getRequestTime());
+  }
+}

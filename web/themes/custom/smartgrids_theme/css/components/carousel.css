@@ -1,0 +1,160 @@
+/**
+ * SmartGrids — horizontal product carousels (Swiper).
+ * "Peek" layouts on mobile (1.2 / 2.2 slides visible) signal swipeability,
+ * like native shopping apps. Without JS the markup degrades to a
+ * scroll-snapped horizontal scroller.
+ */
+
+.sg-carousel-section {
+  margin-block: var(--sg-space-xl);
+}
+
+.sg-carousel-section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sg-space-md);
+  margin-block-end: var(--sg-space-md);
+}
+
+.sg-carousel-section__title {
+  margin: 0;
+  font-size: var(--sg-font-size-xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.sg-carousel-section__more {
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.sg-carousel-section__more:hover {
+  text-decoration: underline;
+}
+
+/* --- Swiper container ----------------------------------------------- */
+.sg-carousel {
+  position: relative;
+}
+
+.sg-carousel .swiper {
+  /* Let the lifted card + its shadow escape the clip box. */
+  padding: var(--sg-space-xs) var(--sg-space-2xs) var(--sg-space-lg);
+  margin: calc(-1 * var(--sg-space-xs)) calc(-1 * var(--sg-space-2xs)) 0;
+}
+
+.sg-carousel .swiper-slide {
+  height: auto; /* equal-height cards */
+  width: auto;
+}
+
+.sg-carousel .swiper-slide > * {
+  height: 100%;
+}
+
+/* --- No-JS / pre-init fallback: scroll-snap scroller ----------------- */
+.sg-carousel .swiper:not(.swiper-initialized) .swiper-wrapper {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: var(--sg-space-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-block-end: var(--sg-space-xs);
+}
+
+.sg-carousel .swiper:not(.swiper-initialized) .swiper-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.sg-carousel .swiper:not(.swiper-initialized) .swiper-slide {
+  scroll-snap-align: start;
+}
+
+@media (min-width: 30em) {
+  .sg-carousel .swiper:not(.swiper-initialized) .swiper-wrapper {
+    grid-auto-columns: 44%;
+  }
+}
+
+@media (min-width: 48em) {
+  .sg-carousel .swiper:not(.swiper-initialized) .swiper-wrapper {
+    grid-auto-columns: 30%;
+  }
+}
+
+@media (min-width: 64em) {
+  .sg-carousel .swiper:not(.swiper-initialized) .swiper-wrapper {
+    grid-auto-columns: 23%;
+  }
+}
+
+/* --- Navigation arrows (desktop; hidden on touch) -------------------- */
+.sg-carousel__nav {
+  position: absolute;
+  inset-block-start: 40%;
+  z-index: 10;
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--sg-shadow-md);
+  cursor: pointer;
+  transition: transform var(--sg-transition), opacity var(--sg-transition);
+}
+
+.sg-carousel__nav:hover {
+  transform: scale(1.06);
+}
+
+.sg-carousel__nav svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+.sg-carousel__nav--prev {
+  inset-inline-start: -0.75rem;
+}
+
+.sg-carousel__nav--next {
+  inset-inline-end: -0.75rem;
+}
+
+.sg-carousel__nav[disabled],
+.sg-carousel__nav.swiper-button-disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (min-width: 48em) {
+  .sg-carousel__nav {
+    display: inline-flex;
+  }
+}
+
+/* --- Progress bar pagination (subtle, app-like) ---------------------- */
+.sg-carousel .swiper-pagination-progressbar {
+  position: static;
+  height: 3px;
+  margin-block-start: var(--sg-space-2xs);
+  border-radius: 999px;
+  background: var(--sg-color-surface-alt);
+  overflow: hidden;
+}
+
+.sg-carousel .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  background: var(--sg-color-primary);
+  border-radius: 999px;
+}

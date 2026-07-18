@@ -1,0 +1,167 @@
+<?php
+
+/**
+ * @file
+ * Schema and setup for the SmartGrids storefront data services.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_schema().
+ */
+function smartgrids_storefront_schema(): array {
+  $schema['smartgrids_review'] = [
+    'description' => 'Product reviews with moderation.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'uuid' => ['type' => 'varchar_ascii', 'length' => 36, 'not null' => TRUE],
+      'product_id' => ['type' => 'int', 'not null' => TRUE],
+      'product_uuid' => ['type' => 'varchar_ascii', 'length' => 36, 'not null' => TRUE],
+      'uid' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'author' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+      'email' => ['type' => 'varchar', 'length' => 254, 'not null' => TRUE],
+      'rating' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE],
+      'title' => ['type' => 'varchar', 'length' => 120, 'not null' => TRUE, 'default' => ''],
+      'body' => ['type' => 'text', 'not null' => TRUE],
+      // pending | published | rejected | flagged.
+      'status' => ['type' => 'varchar_ascii', 'length' => 16, 'not null' => TRUE, 'default' => 'pending'],
+      'verified' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      'helpful' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'not_helpful' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'reply' => ['type' => 'text', 'not null' => FALSE],
+      'ip' => ['type' => 'varchar_ascii', 'length' => 45, 'not null' => TRUE, 'default' => ''],
+      'created' => ['type' => 'int', 'not null' => TRUE],
+      'changed' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'uuid' => ['uuid'],
+      // One review per email per product (edit = update, not duplicate).
+      'product_email' => ['product_id', 'email'],
+    ],
+    'indexes' => ['product_status' => ['product_uuid', 'status']],
+  ];
+
+  $schema['smartgrids_notification'] = [
+    'description' => 'Storefront notifications. uid 0 = broadcast to everyone.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'uuid' => ['type' => 'varchar_ascii', 'length' => 36, 'not null' => TRUE],
+      'uid' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'type' => ['type' => 'varchar_ascii', 'length' => 32, 'not null' => TRUE],
+      'title' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+      'body' => ['type' => 'text', 'not null' => FALSE],
+      'url' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+      'product_uuid' => ['type' => 'varchar_ascii', 'length' => 36, 'not null' => TRUE, 'default' => ''],
+      'created' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => ['uuid' => ['uuid']],
+    'indexes' => ['uid_created' => ['uid', 'created']],
+  ];
+
+  $schema['smartgrids_purchase'] = [
+    'description' => 'Idempotent purchase ledger, one row per order item.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'order_id' => ['type' => 'int', 'not null' => TRUE],
+      'variation_id' => ['type' => 'int', 'not null' => TRUE],
+      'product_id' => ['type' => 'int', 'not null' => TRUE],
+      'quantity' => ['type' => 'int', 'not null' => TRUE, 'default' => 1],
+      'currency' => ['type' => 'varchar_ascii', 'length' => 3, 'not null' => TRUE, 'default' => 'USD'],
+      'created' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'primary key' => ['id'],
+    // The same order item can never be counted twice (duplicate events,
+    // webhook replays, etc.).
+    'unique keys' => ['order_variation' => ['order_id', 'variation_id']],
+    'indexes' => ['product' => ['product_id'], 'created' => ['created']],
+  ];
+
+  $schema['smartgrids_download'] = [
+    'description' => 'Ledger of successful, authorised digital downloads.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'order_id' => ['type' => 'int', 'not null' => TRUE],
+      'variation_id' => ['type' => 'int', 'not null' => TRUE],
+      'product_id' => ['type' => 'int', 'not null' => TRUE],
+      'fid' => ['type' => 'int', 'not null' => TRUE],
+      'ip' => ['type' => 'varchar_ascii', 'length' => 45, 'not null' => TRUE, 'default' => ''],
+      'created' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'product' => ['product_id'],
+      'order_variation' => ['order_id', 'variation_id'],
+    ],
+  ];
+
+  $schema['smartgrids_rate'] = [
+    'description' => 'Exchange rates relative to the store base currency.',
+    'fields' => [
+      'currency' => ['type' => 'varchar_ascii', 'length' => 3, 'not null' => TRUE],
+      'rate' => ['type' => 'numeric', 'precision' => 19, 'scale' => 6, 'not null' => TRUE],
+      'updated' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'primary key' => ['currency'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Adds sale-window and optional price fields to product variations,
+ * imports a starter currency set (admins manage the full list at
+ * /admin/commerce/config/currencies) and seeds the base exchange rate.
+ */
+function smartgrids_storefront_install(): void {
+  // 1. Variation fields: sale window + optional prices.
+  $fields = [
+    'field_sale_start' => ['type' => 'datetime', 'label' => 'Sale start'],
+    'field_sale_end' => ['type' => 'datetime', 'label' => 'Sale end'],
+    'field_subscription_price' => ['type' => 'commerce_price', 'label' => 'Subscription price'],
+    'field_download_price' => ['type' => 'commerce_price', 'label' => 'Download price'],
+  ];
+  foreach ($fields as $name => $def) {
+    if (!FieldStorageConfig::loadByName('commerce_product_variation', $name)) {
+      FieldStorageConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'commerce_product_variation',
+        'type' => $def['type'],
+        'settings' => $def['type'] === 'datetime' ? ['datetime_type' => 'datetime'] : [],
+      ])->save();
+    }
+    if (!FieldConfig::loadByName('commerce_product_variation', 'default', $name)) {
+      FieldConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'commerce_product_variation',
+        'bundle' => 'default',
+        'label' => $def['label'],
+      ])->save();
+    }
+  }
+
+  // 2. Starter currencies (idempotent; skips already-imported ones).
+  /** @var \Drupal\commerce_price\CurrencyImporterInterface $importer */
+  $importer = \Drupal::service('commerce_price.currency_importer');
+  foreach (['GBP', 'EUR', 'INR', 'AED'] as $code) {
+    try {
+      $importer->import($code);
+    }
+    catch (\Throwable $e) {
+      // Already imported or unknown code — not fatal.
+    }
+  }
+
+  // 3. Seed the base currency rate so conversion works before first cron.
+  $store = \Drupal::entityTypeManager()->getStorage('commerce_store')->loadDefault();
+  $base = $store ? $store->getDefaultCurrencyCode() : 'USD';
+  \Drupal::database()->merge('smartgrids_rate')
+    ->key('currency', $base)
+    ->fields(['rate' => 1, 'updated' => \Drupal::time()->getRequestTime()])
+    ->execute();
+}

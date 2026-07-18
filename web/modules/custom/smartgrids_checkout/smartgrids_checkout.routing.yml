@@ -1,0 +1,12 @@
+smartgrids_checkout.place_order:
+  path: '/api/storefront/checkout'
+  defaults:
+    _controller: '\Drupal\smartgrids_checkout\Controller\CheckoutController::placeOrder'
+  methods: [POST]
+  requirements:
+    # The controller enforces a shared-secret header. This endpoint is only
+    # ever called server-to-server from the Next.js API route, never from a
+    # browser, so no CSRF token / session is involved.
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'

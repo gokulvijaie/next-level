@@ -39,4 +39,5 @@ hidden:
   field_date_of_birth: true
   field_first_name: true
   field_last_name: true
+  langcode: true
   member_for: true

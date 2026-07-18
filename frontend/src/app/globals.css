@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Design language: black / white / bright yellow, pill buttons,
+     generously rounded cards (see the BarBrew-style reference). */
+  :root {
+    --background: 0 0% 97%;
+    --foreground: 0 0% 6%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+    /* Primary actions are BLACK pills. */
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 100%;
+    /* Brand yellow: cards, highlights, active states. */
+    --brand: 46 100% 50%;
+    --brand-foreground: 0 0% 9%;
+    /* Orange "Buy now" call-to-action. */
+    --cta: 28 96% 54%;
+    --cta-foreground: 0 0% 100%;
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 0 0% 8%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 40%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 29%;
+    --border: 0 0% 84%;
+    --input: 0 0% 86%;
+    --ring: 46 100% 45%;
+    --radius: 1.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --brand: 47 100% 50%;
+    --brand-foreground: 0 0% 9%;
+    --cta: 28 96% 54%;
+    --cta-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 65%;
+    --destructive: 0 63% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 69% 45%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 47 100% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at -8rem 9rem, hsl(var(--brand)) 0 9.5rem, transparent 9.6rem),
+      radial-gradient(circle at calc(100% + 7rem) 34rem, hsl(var(--brand)) 0 13rem, transparent 13.1rem),
+      linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(var(--background)) 34rem);
+    background-attachment: fixed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Reserve space for the mobile bottom tab bar (+ iOS safe area). */
+  .pb-bottom-nav {
+    padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .theme-panel {
+    @apply rounded-[2rem] bg-brand text-brand-foreground shadow-card-hover;
+  }
+
+  .soft-panel {
+    @apply rounded-[2rem] bg-card shadow-card;
+  }
+}
+
+/* Swiper: let lifted cards and their shadows escape the clip box. */
+.product-swiper .swiper {
+  padding: 0.5rem 0.25rem 1.5rem;
+  margin: -0.5rem -0.25rem 0;
+}
+.product-swiper .swiper-slide {
+  height: auto;
+}

@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * Recently viewed rail — an empty carousel shell that
+ * js/recently-viewed.js fills from localStorage. Rendered hidden and
+ * revealed only when the visitor has history, so it never flashes empty.
+ *
+ * Note: no data-sg-carousel attribute here on purpose; the JS adds it
+ * after injecting slides so Swiper initialises exactly once, non-empty.
+ *
+ * Usage: {% include '@smartgrids_theme/components/recently-viewed.html.twig' %}
+ */
+#}
+{{ attach_library('smartgrids_theme/recently-viewed') }}
+
+<section class="sg-carousel-section" data-sg-recently-viewed hidden>
+  <header class="sg-carousel-section__header">
+    <h2 class="sg-carousel-section__title">{{ 'Recently viewed'|t }}</h2>
+  </header>
+  <div class="sg-carousel">
+    <button type="button" class="sg-carousel__nav sg-carousel__nav--prev" data-sg-carousel-prev>
+      <span class="visually-hidden">{{ 'Previous products'|t }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="swiper">
+      <div class="swiper-wrapper"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+    <button type="button" class="sg-carousel__nav sg-carousel__nav--next" data-sg-carousel-next>
+      <span class="visually-hidden">{{ 'Next products'|t }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>

@@ -1,0 +1,22 @@
+uuid: 6cc4e1c4-92ec-4214-a60a-4c705351d0ae
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - smartgrids_theme
+_core:
+  default_config_hash: BZ5tpW7H8X4PVGRm3MImTIHd2tN0eF7zOtp4SpRYUA0
+id: smartgrids_theme_messages
+theme: smartgrids_theme
+region: highlighted
+weight: -5
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  label_display: '0'
+  provider: system
+visibility: {  }

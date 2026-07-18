@@ -1,0 +1,107 @@
+/**
+ * SmartGrids — main navigation. Mobile: toggle-driven panel.
+ * Desktop: horizontal bar with dropdowns on hover/focus.
+ */
+
+.main-nav {
+  background: var(--sg-color-surface);
+  border-block-end: 1px solid var(--sg-color-border);
+}
+
+.main-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-xs);
+  min-height: 2.75rem;
+  padding-inline: var(--sg-space-sm);
+  margin-block: var(--sg-space-xs);
+  font: inherit;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-md);
+  cursor: pointer;
+}
+
+.main-nav__toggle svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Collapsed by default on mobile; JS flips [hidden]. */
+.main-nav__menu-wrapper[hidden] {
+  display: none;
+}
+
+.main-nav__menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav__menu a {
+  display: block;
+  padding: var(--sg-space-sm) var(--sg-space-md);
+  color: var(--sg-color-text);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--sg-radius-sm);
+}
+
+.main-nav__menu a:hover,
+.main-nav__menu a.is-active {
+  color: var(--sg-color-primary);
+  background: var(--sg-color-surface-alt);
+}
+
+/* Second level */
+.main-nav__menu .menu {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: var(--sg-space-md);
+}
+
+@media (min-width: 64em) {
+  .main-nav__toggle {
+    display: none;
+  }
+
+  /* Always visible on desktop regardless of the [hidden] state. */
+  .main-nav__menu-wrapper[hidden] {
+    display: block;
+  }
+
+  .main-nav__menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sg-space-2xs);
+  }
+
+  .main-nav__menu > li {
+    position: relative;
+  }
+
+  .main-nav__menu .menu {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    z-index: 50;
+    min-width: 14rem;
+    padding: var(--sg-space-xs);
+    background: var(--sg-color-surface);
+    border: 1px solid var(--sg-color-border);
+    border-radius: var(--sg-radius-md);
+    box-shadow: var(--sg-shadow-md);
+    display: none;
+  }
+
+  /* Keyboard accessible: :focus-within keeps the submenu open while
+     tabbing through it. */
+  .main-nav__menu > li:hover > .menu,
+  .main-nav__menu > li:focus-within > .menu {
+    display: block;
+  }
+}

@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Rows wrapper for views tagged "product_grid": renders each row (a
+ * product teaser -> product card) inside the responsive CSS grid.
+ *
+ * Uses a semantic list: a product grid is a list of products.
+ */
+#}
+<ul class="product-grid">
+  {% for row in rows %}
+    <li{{ row.attributes }}>
+      {{ row.content }}
+    </li>
+  {% endfor %}
+</ul>

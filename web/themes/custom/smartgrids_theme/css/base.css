@@ -1,0 +1,268 @@
+/**
+ * SmartGrids — base: design tokens, reset, typography, buttons, forms.
+ * System font stack: zero download, zero layout shift.
+ */
+
+:root {
+  /* Colour tokens — all pairs meet WCAG AA contrast on their backgrounds. */
+  --sg-color-primary: #1d4ed8;
+  --sg-color-primary-hover: #1e40af;
+  --sg-color-primary-contrast: #ffffff;
+  --sg-color-accent: #b45309;
+  --sg-color-danger: #b91c1c;
+  --sg-color-success: #15803d;
+  --sg-color-text: #1f2937;
+  --sg-color-text-muted: #4b5563;
+  --sg-color-bg: #ffffff;
+  --sg-color-surface: #ffffff;
+  --sg-color-surface-alt: #f3f4f6;
+  --sg-color-border: #d1d5db;
+  --sg-color-focus: #1d4ed8;
+
+  /* Badges */
+  --sg-badge-sale-bg: #b91c1c;
+  --sg-badge-new-bg: #15803d;
+  --sg-badge-featured-bg: #b45309;
+  --sg-badge-oos-bg: #4b5563;
+
+  /* Typography */
+  --sg-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sg-font-size-sm: 0.875rem;
+  --sg-font-size-base: 1rem;
+  --sg-font-size-lg: 1.125rem;
+  --sg-font-size-xl: 1.375rem;
+  --sg-font-size-2xl: 1.75rem;
+  --sg-line-height: 1.5;
+
+  /* Spacing scale */
+  --sg-space-2xs: 0.25rem;
+  --sg-space-xs: 0.5rem;
+  --sg-space-sm: 0.75rem;
+  --sg-space-md: 1rem;
+  --sg-space-lg: 1.5rem;
+  --sg-space-xl: 2rem;
+  --sg-space-2xl: 3rem;
+
+  /* Misc — premium: generous radii, soft layered shadows. */
+  --sg-radius-sm: 0.375rem;
+  --sg-radius-md: 0.625rem;
+  --sg-radius-lg: 1rem;
+  --sg-radius-xl: 1.25rem;
+  --sg-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05), 0 2px 8px rgb(15 23 42 / 0.05);
+  --sg-shadow-md: 0 2px 4px rgb(15 23 42 / 0.05), 0 12px 28px rgb(15 23 42 / 0.10);
+  --sg-shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 6px 18px rgb(15 23 42 / 0.06);
+  --sg-shadow-card-hover: 0 4px 8px rgb(15 23 42 / 0.06), 0 18px 40px rgb(15 23 42 / 0.14);
+  --sg-transition: 180ms cubic-bezier(0.2, 0, 0, 1);
+  --sg-container-max: 82.5rem; /* 1320px */
+  --sg-bottom-nav-height: 3.75rem;
+
+  /* Product card */
+  --sg-card-image-ratio: 4 / 5;
+}
+
+/* --- Minimal reset -------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sg-font-body);
+  font-size: var(--sg-font-size-base);
+  line-height: var(--sg-line-height);
+  color: var(--sg-color-text);
+  background: var(--sg-color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+svg {
+  max-width: 100%;
+  display: block;
+  height: auto;
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  margin-block: 0 var(--sg-space-sm);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--sg-font-size-2xl); }
+h2 { font-size: var(--sg-font-size-xl); }
+h3 { font-size: var(--sg-font-size-lg); }
+
+a {
+  color: var(--sg-color-primary);
+}
+
+a:hover {
+  color: var(--sg-color-primary-hover);
+}
+
+/* --- Focus indicators (keyboard navigation) ------------------------- */
+:focus-visible {
+  outline: 3px solid var(--sg-color-focus);
+  outline-offset: 2px;
+  border-radius: var(--sg-radius-sm);
+}
+
+/* Never remove outlines for keyboard users; only suppress for mouse. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- Visually hidden (Drupal already ships .visually-hidden; keep a
+       fallback for standalone usage) ------------------------------- */
+.sg-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  inset-block-start: -3rem;
+  inset-inline-start: var(--sg-space-md);
+  z-index: 100;
+  padding: var(--sg-space-xs) var(--sg-space-md);
+  background: var(--sg-color-primary);
+  color: var(--sg-color-primary-contrast);
+  border-radius: 0 0 var(--sg-radius-md) var(--sg-radius-md);
+  transition: inset-block-start var(--sg-transition);
+}
+
+.skip-link:focus {
+  inset-block-start: 0;
+  color: var(--sg-color-primary-contrast);
+}
+
+/* --- Buttons -------------------------------------------------------- */
+.sg-btn,
+.button,
+button.form-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sg-space-2xs);
+  min-height: 2.75rem; /* 44px touch target */
+  padding: var(--sg-space-xs) var(--sg-space-md);
+  font: inherit;
+  font-weight: 600;
+  color: var(--sg-color-primary-contrast);
+  background: var(--sg-color-primary);
+  border: 2px solid transparent;
+  border-radius: var(--sg-radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--sg-transition), border-color var(--sg-transition);
+}
+
+.sg-btn:hover,
+.button:hover,
+button.form-submit:hover {
+  background: var(--sg-color-primary-hover);
+  color: var(--sg-color-primary-contrast);
+}
+
+.sg-btn--secondary {
+  color: var(--sg-color-primary);
+  background: transparent;
+  border-color: currentColor;
+}
+
+.sg-btn--secondary:hover {
+  color: var(--sg-color-primary-hover);
+  background: var(--sg-color-surface-alt);
+}
+
+.sg-btn:disabled,
+.sg-btn[aria-disabled="true"] {
+  background: var(--sg-color-surface-alt);
+  color: var(--sg-color-text-muted);
+  cursor: not-allowed;
+}
+
+/* App-like tap feedback. */
+.sg-btn:active,
+.sg-icon-btn:active,
+button.form-submit:active {
+  transform: scale(0.97);
+}
+
+/* Icon-only buttons (wishlist, quick view, close). */
+.sg-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface);
+  border: 1px solid var(--sg-color-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color var(--sg-transition), border-color var(--sg-transition), transform var(--sg-transition);
+}
+
+.sg-icon-btn:hover {
+  color: var(--sg-color-primary);
+  border-color: var(--sg-color-primary);
+}
+
+.sg-icon-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* --- Forms ---------------------------------------------------------- */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+  font: inherit;
+  min-height: 2.75rem;
+  padding: var(--sg-space-xs) var(--sg-space-sm);
+  color: var(--sg-color-text);
+  background: var(--sg-color-surface);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-md);
+  width: 100%;
+  max-width: 100%;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--sg-font-size-sm);
+  margin-block-end: var(--sg-space-2xs);
+}
+
+/* --- Motion --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Breadcrumb navigation with schema.org BreadcrumbList markup.
+ */
+#}
+{% if breadcrumb %}
+  <nav class="breadcrumb" role="navigation" aria-label="{{ 'Breadcrumb'|t }}">
+    <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+      {% for item in breadcrumb %}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"
+          {{ loop.last ? 'aria-current="page"' }}>
+          {% if item.url %}
+            <a href="{{ item.url }}" itemprop="item"><span itemprop="name">{{ item.text }}</span></a>
+          {% else %}
+            <span itemprop="name">{{ item.text }}</span>
+          {% endif %}
+          <meta itemprop="position" content="{{ loop.index }}">
+        </li>
+      {% endfor %}
+    </ol>
+  </nav>
+{% endif %}

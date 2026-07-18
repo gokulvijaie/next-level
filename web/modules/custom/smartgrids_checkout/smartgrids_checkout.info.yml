@@ -1,0 +1,8 @@
+name: 'SmartGrids Checkout'
+type: module
+description: 'Server-to-server checkout endpoint for the decoupled Next.js storefront. Creates guest Commerce orders from a validated payload.'
+package: SmartGrids
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - commerce:commerce_order
+  - commerce:commerce_product

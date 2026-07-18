@@ -1,0 +1,10 @@
+services:
+  smartgrids_storefront.rates:
+    class: Drupal\smartgrids_storefront\Service\ExchangeRateService
+    arguments: ['@database', '@http_client', '@config.factory', '@entity_type.manager', '@datetime.time', '@logger.channel.default']
+
+  smartgrids_storefront.order_subscriber:
+    class: Drupal\smartgrids_storefront\EventSubscriber\OrderSubscriber
+    arguments: ['@database', '@datetime.time']
+    tags:
+      - { name: event_subscriber }

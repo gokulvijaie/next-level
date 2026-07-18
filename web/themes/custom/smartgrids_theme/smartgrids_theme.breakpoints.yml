@@ -1,0 +1,35 @@
+smartgrids_theme.mobile:
+  label: Mobile
+  mediaQuery: ''
+  weight: 0
+  multipliers:
+    - 1x
+    - 2x
+smartgrids_theme.mobile_lg:
+  label: 'Large mobile'
+  mediaQuery: '(min-width: 30em)'
+  weight: 1
+  multipliers:
+    - 1x
+    - 2x
+smartgrids_theme.tablet:
+  label: Tablet
+  mediaQuery: '(min-width: 48em)'
+  weight: 2
+  multipliers:
+    - 1x
+    - 2x
+smartgrids_theme.desktop:
+  label: Desktop
+  mediaQuery: '(min-width: 64em)'
+  weight: 3
+  multipliers:
+    - 1x
+    - 2x
+smartgrids_theme.wide:
+  label: 'Large desktop'
+  mediaQuery: '(min-width: 80em)'
+  weight: 4
+  multipliers:
+    - 1x
+    - 2x

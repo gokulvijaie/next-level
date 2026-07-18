@@ -1,0 +1,76 @@
+{#
+/**
+ * @file
+ * Full product page.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - product: The rendered product fields ({{ product.field_name }}).
+ * - product_entity: The product entity.
+ * - card: Card data computed in preprocess (price, badge, rating, ...).
+ */
+#}
+{{ attach_library('smartgrids_theme/cart') }}
+
+<article{{ attributes.addClass('product-full') }}>
+  <div class="product-full__layout">
+
+    <div class="product-full__media">
+      {{ product.field_product_image }}
+    </div>
+
+    <div class="product-full__info">
+      {% if card.category %}
+        <p class="product-card__category">{{ card.category }}</p>
+      {% endif %}
+
+      {{ title_prefix }}
+      <h1 class="product-full__title">{{ product_entity.label }}</h1>
+      {{ title_suffix }}
+
+      {% if card.rating is not null %}
+        <div class="product-card__rating">
+          <span class="sg-stars" role="img"
+            aria-label="{{ 'Rated @rating out of 5 stars'|t({'@rating': card.rating}) }}">
+            <span class="sg-stars__fill" style="width: {{ (card.rating / 5 * 100)|round }}%"></span>
+          </span>
+          {% if card.review_count is not null %}
+            <span>
+              {% set review_count = card.review_count %}
+              {% trans %}{{ review_count }} review{% plural review_count %}{{ review_count }} reviews{% endtrans %}
+            </span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="product-card__price-row">
+        {% if card.price %}
+          <span class="product-card__price{{ card.original_price ? ' product-card__price--sale' }}">{{ card.price }}</span>
+        {% endif %}
+        {% if card.original_price %}
+          <s class="product-card__price-original">
+            <span class="visually-hidden">{{ 'Original price:'|t }}</span> {{ card.original_price }}
+          </s>
+        {% endif %}
+        {% if card.discount_percent %}
+          <span class="product-card__discount">{{ '@percent% off'|t({'@percent': card.discount_percent}) }}</span>
+        {% endif %}
+      </div>
+
+      <p class="product-card__stock{{ not card.in_stock ? ' product-card__stock--out' }}">
+        {{ card.in_stock ? 'In stock'|t : 'Out of stock'|t }}
+      </p>
+
+      {{ product.body }}
+
+      {# Variations field: attribute selectors + add-to-cart button. #}
+      {{ product.variations }}
+
+      {# Render any remaining fields not printed above. #}
+      {{ product|without('field_product_image', 'body', 'variations') }}
+    </div>
+  </div>
+
+  {# "Recently viewed" rail (excludes the product being viewed). #}
+  {% include '@smartgrids_theme/components/recently-viewed.html.twig' %}
+</article>

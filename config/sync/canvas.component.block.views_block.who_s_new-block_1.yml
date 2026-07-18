@@ -1,0 +1,48 @@
+uuid: a744e689-2f49-4b03-8307-7e79cca9bd01
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.who_s_new
+  module:
+    - views
+active_version: b4a64f67987209ff
+versioned_properties:
+  active:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_new-block_1'
+        label: "Who's new"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+  bcb42a461611d8ec:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_new-block_1'
+        label: "Who's new"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+  dfa6b6211078e362:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_new-block_1'
+        label: "Who's new"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+label: "Who's new"
+id: block.views_block.who_s_new-block_1
+provider: views
+source: block
+source_local_id: 'views_block:who_s_new-block_1'

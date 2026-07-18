@@ -1,0 +1,9 @@
+name: 'SmartGrids Storefront API'
+type: module
+description: 'Storefront data services for the decoupled Next.js frontend: product statistics (purchases, downloads), reviews & ratings, notifications, exchange rates and secure digital downloads.'
+package: SmartGrids
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - commerce:commerce_order
+  - commerce:commerce_product
+  - commerce:commerce_price

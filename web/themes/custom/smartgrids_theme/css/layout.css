@@ -1,0 +1,77 @@
+/**
+ * SmartGrids — page-level layout. Mobile-first.
+ */
+
+.sg-container {
+  width: 100%;
+  max-width: var(--sg-container-max);
+  margin-inline: auto;
+  padding-inline: var(--sg-space-md);
+}
+
+@media (min-width: 48em) {
+  .sg-container {
+    padding-inline: var(--sg-space-lg);
+  }
+}
+
+/* Main content + filter sidebar. Single column on mobile; the sidebar
+   becomes a slide-in drawer (see filters.css). */
+.sg-layout {
+  display: block;
+  padding-block: var(--sg-space-lg);
+}
+
+@media (min-width: 64em) {
+  .sg-layout--with-sidebar {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: var(--sg-space-xl);
+    align-items: start;
+  }
+}
+
+.sg-region--content-bottom {
+  padding-block: var(--sg-space-xl);
+}
+
+.sg-region--content-bottom > * + * {
+  margin-block-start: var(--sg-space-2xl);
+}
+
+/* Section headers for Featured / New arrivals / Sale rows. */
+.sg-section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sg-space-md);
+  margin-block-end: var(--sg-space-md);
+}
+
+.sg-section__link {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- Full product page ---------------------------------------------- */
+.product-full__layout {
+  display: grid;
+  gap: var(--sg-space-lg);
+}
+
+@media (min-width: 48em) {
+  .product-full__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--sg-space-2xl);
+    align-items: start;
+  }
+}
+
+.product-full__media img {
+  width: 100%;
+  border-radius: var(--sg-radius-lg);
+}
+
+.product-full__title {
+  margin-block-end: var(--sg-space-xs);
+}

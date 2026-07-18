@@ -1,0 +1,12 @@
+_core:
+  default_config_hash: rvasJJkL462tLuGEfcTDUE_1ReQ_UkXB1gsCVJtCIPg
+environment: test
+apikey:
+  test:
+    public: ''
+    secret: ''
+    webhook: ''
+  live:
+    public: ''
+    secret: ''
+    webhook: ''

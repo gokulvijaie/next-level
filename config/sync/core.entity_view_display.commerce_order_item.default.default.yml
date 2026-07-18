@@ -18,27 +18,27 @@ bundle: default
 mode: default
 content:
   created:
-    label: hidden
     type: timestamp
-    weight: 0
-    region: content
+    label: hidden
     settings:
       date_format: medium
       custom_date_format: ''
       timezone: ''
     third_party_settings: {  }
+    weight: 0
+    region: content
   purchased_entity:
     type: entity_reference_entity_view
-    weight: 0
+    label: above
     settings:
       view_mode: default
       link: false
     third_party_settings: {  }
-    label: above
+    weight: 0
     region: content
   quantity:
     type: commerce_quantity
-    weight: 1
+    label: above
     settings:
       thousand_separator: ''
       decimal_separator: .
@@ -46,25 +46,25 @@ content:
       prefix_suffix: true
       strip_trailing_zeroes: true
     third_party_settings: {  }
-    label: above
+    weight: 1
     region: content
   total_price:
     type: commerce_price_default
-    weight: 3
+    label: above
     settings:
       strip_trailing_zeroes: false
       currency_display: symbol
     third_party_settings: {  }
-    label: above
+    weight: 3
     region: content
   unit_price:
     type: commerce_price_default
-    weight: 2
+    label: above
     settings:
       strip_trailing_zeroes: false
       currency_display: symbol
     third_party_settings: {  }
-    label: above
+    weight: 2
     region: content
 hidden:
   adjustments: true

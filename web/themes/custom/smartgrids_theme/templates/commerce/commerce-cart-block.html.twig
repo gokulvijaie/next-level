@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Commerce cart block: icon + item count linking to the cart page.
+ *
+ * Available variables (from the commerce_cart module):
+ * - count: Number of items in the cart.
+ * - count_text: Translated "@count items" text.
+ * - url: Cart page URL.
+ * - content: Cart contents render array (dropdown, unused here).
+ * - links: Additional cart links.
+ */
+#}
+{{ attach_library('smartgrids_theme/cart') }}
+
+<div class="cart-block__wrapper">
+  <a class="cart-block__link" href="{{ url }}">
+    <svg class="cart-block__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/>
+      <path d="M2 3h3l2.6 12.4a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 8H6"/>
+    </svg>
+    <span class="cart-block__count" aria-hidden="true">{{ count }}</span>
+    <span class="visually-hidden">{{ count_text }}</span>
+    <span class="cart-block__label">{{ 'Cart'|t }}</span>
+  </a>
+</div>

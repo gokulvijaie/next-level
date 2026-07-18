@@ -6,7 +6,14 @@ dependencies:
     - commerce_product.commerce_product_type.default
     - field.storage.commerce_product.field_product_image
   module:
+    - content_translation
     - image
+third_party_settings:
+  content_translation:
+    translation_sync:
+      alt: alt
+      title: title
+      file: '0'
 id: commerce_product.default.field_product_image
 field_name: field_product_image
 entity_type: commerce_product

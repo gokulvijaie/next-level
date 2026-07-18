@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Loading skeleton card. Include several inside a .product-grid while
+ * results load:
+ *
+ * {% for i in 1..8 %}
+ *   {% include '@smartgrids_theme/components/skeleton-card.html.twig' %}
+ * {% endfor %}
+ */
+#}
+<div class="product-card product-card--skeleton" aria-hidden="true">
+  <div class="product-card__media sg-skeleton"></div>
+  <div class="product-card__body">
+    <div class="sg-skeleton sg-skeleton--line sg-skeleton--line-short"></div>
+    <div class="sg-skeleton sg-skeleton--line"></div>
+    <div class="sg-skeleton sg-skeleton--line sg-skeleton--line-short"></div>
+  </div>
+  <div class="product-card__footer">
+    <div class="sg-skeleton sg-skeleton--btn"></div>
+  </div>
+</div>

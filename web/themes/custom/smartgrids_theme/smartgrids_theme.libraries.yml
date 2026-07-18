@@ -1,0 +1,124 @@
+# Global assets, attached on every page via the .info.yml file.
+global:
+  version: 1.0.0
+  css:
+    base:
+      css/base.css: {}
+    layout:
+      css/layout.css: {}
+    component:
+      css/components/header.css: {}
+      css/components/navigation.css: {}
+      css/components/banner.css: {}
+      css/components/breadcrumbs.css: {}
+      css/components/pagination.css: {}
+      css/components/footer.css: {}
+      css/components/app-shell.css: {}
+  js:
+    js/mobile-nav.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+# Swiper 11 (local copy, no CDN request).
+swiper:
+  version: 11.2.10
+  css:
+    component:
+      js/vendor/swiper/swiper-bundle.min.css: { minified: true }
+  js:
+    js/vendor/swiper/swiper-bundle.min.js: { minified: true }
+
+# Horizontal product carousels (trending, best sellers, recommended, ...).
+carousel:
+  version: 1.0.0
+  css:
+    component:
+      css/components/carousel.css: {}
+  js:
+    js/carousel.js: {}
+  dependencies:
+    - smartgrids_theme/swiper
+    - smartgrids_theme/product-card
+    - core/drupal
+    - core/once
+
+# App shell: mobile bottom tab bar, category chips, sticky header polish.
+app-shell:
+  version: 1.0.0
+  css:
+    component:
+      css/components/app-shell.css: {}
+  dependencies:
+    - core/drupal
+
+# Recently-viewed rail: records product visits in localStorage and renders
+# a client-side carousel. Cache-safe: no per-user server rendering.
+recently-viewed:
+  version: 1.0.0
+  js:
+    js/recently-viewed.js: {}
+  dependencies:
+    - smartgrids_theme/carousel
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+
+# Product card component. Attached by the card template itself so it only
+# loads on pages that actually render product cards.
+product-card:
+  version: 1.0.0
+  css:
+    component:
+      css/components/product-card.css: {}
+      css/components/skeleton.css: {}
+  js:
+    js/wishlist.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+# Grid wrapper used by Views listings.
+product-grid:
+  version: 1.0.0
+  css:
+    component:
+      css/components/product-grid.css: {}
+  dependencies:
+    - smartgrids_theme/product-card
+
+# Exposed filters, facets, sort dropdown, mobile filter drawer.
+filters:
+  version: 1.0.0
+  css:
+    component:
+      css/components/filters.css: {}
+  js:
+    js/filter-drawer.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+# Quick-view modal (native <dialog>).
+quick-view:
+  version: 1.0.0
+  css:
+    component:
+      css/components/modal.css: {}
+  js:
+    js/quick-view.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+# Cart block, cart page, quantity steppers.
+cart:
+  version: 1.0.0
+  css:
+    component:
+      css/components/cart.css: {}
+  js:
+    js/quantity.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

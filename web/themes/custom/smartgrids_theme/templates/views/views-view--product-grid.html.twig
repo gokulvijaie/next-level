@@ -1,0 +1,66 @@
+{#
+/**
+ * @file
+ * View wrapper for any view tagged "product_grid" (see
+ * smartgrids_theme_theme_suggestions_views_view_alter()).
+ *
+ * Adds the sort/count toolbar and a styled empty state around the
+ * standard views structure.
+ */
+#}
+{{ attach_library('smartgrids_theme/product-grid') }}
+{{ attach_library('smartgrids_theme/filters') }}
+
+<div{{ attributes.addClass('product-grid-view') }}>
+  {{ title_prefix }}
+  {% if title %}
+    {{ title }}
+  {% endif %}
+  {{ title_suffix }}
+
+  {% if header %}
+    <header class="view-header">{{ header }}</header>
+  {% endif %}
+
+  {% if exposed or feed_icons %}
+    <div class="sg-toolbar">
+      {% if exposed %}
+        <div class="sg-toolbar__filters">{{ exposed }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if attachment_before %}
+    <div class="attachment attachment-before">{{ attachment_before }}</div>
+  {% endif %}
+
+  {% if rows %}
+    <div class="view-content">{{ rows }}</div>
+  {% elseif empty %}
+    <div class="product-grid-empty">
+      <span class="product-grid-empty__icon" aria-hidden="true">🔍</span>
+      <h2 class="product-grid-empty__title">{{ 'No products found'|t }}</h2>
+      <div class="product-grid-empty__text">{{ empty }}</div>
+    </div>
+  {% endif %}
+
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
+
+  {% if attachment_after %}
+    <div class="attachment attachment-after">{{ attachment_after }}</div>
+  {% endif %}
+
+  {% if more %}
+    {{ more }}
+  {% endif %}
+
+  {% if footer %}
+    <footer class="view-footer">{{ footer }}</footer>
+  {% endif %}
+
+  {% if feed_icons %}
+    <div class="feed-icons">{{ feed_icons }}</div>
+  {% endif %}
+</div>

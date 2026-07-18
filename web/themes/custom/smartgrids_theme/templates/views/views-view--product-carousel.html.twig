@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * View wrapper for views tagged "product_carousel" (see
+ * smartgrids_theme_theme_suggestions_views_view_alter()).
+ *
+ * Delegates to the reusable carousel component. The view's title becomes
+ * the section heading; enable the view's "More link" to get the
+ * "View all" link. Rows come pre-wrapped as swiper slides from
+ * views-view-unformatted--product-carousel.html.twig.
+ */
+#}
+{% include '@smartgrids_theme/components/product-carousel.html.twig' with {
+  title: title ?: view.getTitle(),
+  more_url: more['#url'] is defined ? more['#url'] : null,
+  more_text: 'View all'|t,
+  rows: rows,
+  section_attributes: attributes,
+} only %}

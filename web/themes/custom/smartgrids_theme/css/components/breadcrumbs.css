@@ -1,0 +1,40 @@
+/**
+ * SmartGrids — breadcrumbs.
+ */
+
+.breadcrumb {
+  padding-block: var(--sg-space-sm);
+  font-size: var(--sg-font-size-sm);
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sg-space-2xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-2xs);
+  color: var(--sg-color-text-muted);
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  color: var(--sg-color-border);
+}
+
+.breadcrumb a {
+  color: var(--sg-color-text-muted);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--sg-color-primary);
+  text-decoration: underline;
+}

@@ -1,0 +1,48 @@
+uuid: bca66279-50f3-412d-84a4-980d71869239
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.who_s_online
+  module:
+    - views
+active_version: 1e928b337f88f2ed
+versioned_properties:
+  active:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_online-who_s_online_block'
+        label: "Who's online"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+  79bec7ad8d4bd918:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_online-who_s_online_block'
+        label: "Who's online"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+  c2a6251d1913f75d:
+    settings:
+      default_settings:
+        id: 'views_block:who_s_online-who_s_online_block'
+        label: "Who's online"
+        label_display: '0'
+        provider: views
+        views_label: ''
+        items_per_page: null
+    fallback_metadata:
+      slot_definitions: null
+label: "Who's online"
+id: block.views_block.who_s_online-who_s_online_block
+provider: views
+source: block
+source_local_id: 'views_block:who_s_online-who_s_online_block'

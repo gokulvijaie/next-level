@@ -1,0 +1,145 @@
+{#
+/**
+ * @file
+ * SmartGrids page layout.
+ *
+ * Regions: page.header_top, page.branding, page.search, page.cart,
+ * page.primary_menu, page.banner, page.breadcrumb, page.highlighted,
+ * page.help, page.sidebar_filters, page.content, page.content_bottom,
+ * page.footer_first..footer_fourth, page.footer_bottom.
+ */
+#}
+<div class="page">
+
+  <header class="site-header" role="banner">
+    {% if page.header_top %}
+      <div class="site-header__top">
+        <div class="sg-container">{{ page.header_top }}</div>
+      </div>
+    {% endif %}
+
+    <div class="sg-container site-header__main">
+      <div class="site-header__brand">
+        {{ page.branding }}
+      </div>
+
+      {% if page.search %}
+        <div class="site-header__search">
+          {{ page.search }}
+        </div>
+      {% endif %}
+
+      {% if page.cart %}
+        <div class="site-header__cart">
+          {{ page.cart }}
+        </div>
+      {% endif %}
+    </div>
+
+    <nav class="main-nav" aria-label="{{ 'Main navigation'|t }}">
+      <div class="sg-container">
+        <button type="button"
+          class="main-nav__toggle"
+          data-sg-nav-toggle
+          aria-expanded="false"
+          aria-controls="main-nav-menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          {{ 'Menu'|t }}
+        </button>
+        <div id="main-nav-menu" class="main-nav__menu-wrapper" hidden>
+          {{ page.primary_menu }}
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  {% if page.banner %}
+    <div class="sg-container sg-region--banner">
+      {{ page.banner }}
+    </div>
+  {% endif %}
+
+  {% if page.breadcrumb %}
+    <div class="sg-container">
+      {{ page.breadcrumb }}
+    </div>
+  {% endif %}
+
+  {% if page.highlighted %}
+    <div class="sg-container">{{ page.highlighted }}</div>
+  {% endif %}
+
+  {% if page.help %}
+    <div class="sg-container">{{ page.help }}</div>
+  {% endif %}
+
+  <main id="main-content" tabindex="-1">
+    <div class="sg-container sg-layout{{ page.sidebar_filters ? ' sg-layout--with-sidebar' }}">
+
+      {% if page.sidebar_filters %}
+        {# Static sidebar on desktop, off-canvas drawer on mobile. #}
+        <aside class="sg-filters" data-sg-filters tabindex="-1"
+          aria-label="{{ 'Product filters'|t }}">
+          <div class="sg-filters__header">
+            <h2>{{ 'Filters'|t }}</h2>
+            <button type="button" class="sg-icon-btn sg-filters__close" data-sg-filters-close>
+              <span class="visually-hidden">{{ 'Close filters'|t }}</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+          {{ page.sidebar_filters }}
+        </aside>
+        <div class="sg-filters-backdrop" data-sg-filters-backdrop></div>
+      {% endif %}
+
+      <div class="sg-layout__content">
+        {% if page.sidebar_filters %}
+          <button type="button"
+            class="sg-btn sg-btn--secondary sg-filters__open"
+            data-sg-filters-open
+            aria-expanded="false">
+            {{ 'Filter products'|t }}
+          </button>
+        {% endif %}
+
+        {{ page.content }}
+      </div>
+    </div>
+
+    {% if page.content_bottom %}
+      <div class="sg-container sg-region--content-bottom">
+        {{ page.content_bottom }}
+      </div>
+    {% endif %}
+
+    {# Client-side "Recently viewed" rail on the homepage. Product pages
+       include the same component from commerce-product.html.twig. #}
+    {% if is_front %}
+      <div class="sg-container">
+        {% include '@smartgrids_theme/components/recently-viewed.html.twig' %}
+      </div>
+    {% endif %}
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    {% if page.footer_first or page.footer_second or page.footer_third or page.footer_fourth %}
+      <div class="sg-container site-footer__regions">
+        <div>{{ page.footer_first }}</div>
+        <div>{{ page.footer_second }}</div>
+        <div>{{ page.footer_third }}</div>
+        <div>{{ page.footer_fourth }}</div>
+      </div>
+    {% endif %}
+    <div class="site-footer__bottom">
+      <div class="sg-container">
+        {{ page.footer_bottom }}
+      </div>
+    </div>
+  </footer>
+
+  {# Mobile app-style bottom tab bar (hidden on desktop via CSS). #}
+  {% include '@smartgrids_theme/components/bottom-nav.html.twig' with {
+    items: app_nav,
+  } only %}
+
+</div>

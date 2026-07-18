@@ -1,0 +1,57 @@
+/**
+ * SmartGrids — quick-view modal (native <dialog>).
+ */
+
+.sg-modal {
+  width: min(56rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 0;
+  border-radius: var(--sg-radius-lg);
+  box-shadow: var(--sg-shadow-md);
+}
+
+.sg-modal::backdrop {
+  background: rgb(0 0 0 / 0.55);
+}
+
+.sg-modal__inner {
+  display: grid;
+  gap: var(--sg-space-lg);
+  padding: var(--sg-space-lg);
+}
+
+@media (min-width: 48em) {
+  .sg-modal__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.sg-modal__close {
+  position: absolute;
+  inset-block-start: var(--sg-space-sm);
+  inset-inline-end: var(--sg-space-sm);
+}
+
+.sg-modal__media {
+  aspect-ratio: var(--sg-card-image-ratio);
+  background: var(--sg-color-surface-alt);
+  border-radius: var(--sg-radius-md);
+  overflow: hidden;
+}
+
+.sg-modal__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sg-modal__body {
+  display: grid;
+  gap: var(--sg-space-sm);
+  align-content: start;
+}
+
+.sg-modal__price {
+  font-size: var(--sg-font-size-xl);
+  font-weight: 700;
+}

@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Mobile bottom tab bar (native-app style).
+ *
+ * Variables:
+ * - items: List of tabs, each with:
+ *   - title: Label.
+ *   - url: Href.
+ *   - icon: One of 'home', 'shop', 'wishlist', 'cart', 'account'.
+ *   - active: Boolean.
+ *   - badge: Optional count (e.g. cart items).
+ *
+ * Built in smartgrids_theme_preprocess_page() as 'app_nav'.
+ */
+#}
+{% set icons = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  shop: '<path d="M4 7h16l-1.5 13a1 1 0 0 1-1 .9h-11a1 1 0 0 1-1-.9zM8 10V6a4 4 0 0 1 8 0v4"/>',
+  wishlist: '<path d="M12 21C7 16.5 3 13.2 3 9.1 3 6.3 5.2 4 8 4c1.6 0 3.1.8 4 2 .9-1.2 2.4-2 4-2 2.8 0 5 2.3 5 5.1 0 4.1-4 7.4-9 11.9z"/>',
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.4a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 8H6"/>',
+  account: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
+} %}
+
+<nav class="sg-bottom-nav" aria-label="{{ 'App navigation'|t }}">
+  {% for item in items %}
+    <a class="sg-bottom-nav__item{{ item.active ? ' is-active' }}"
+      href="{{ item.url }}"
+      {{ item.active ? 'aria-current="page"' }}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">{{ icons[item.icon]|default(icons.shop)|raw }}</svg>
+      {{ item.title }}
+      {% if item.badge %}
+        <span class="sg-bottom-nav__badge" aria-hidden="true">{{ item.badge }}</span>
+      {% endif %}
+    </a>
+  {% endfor %}
+</nav>

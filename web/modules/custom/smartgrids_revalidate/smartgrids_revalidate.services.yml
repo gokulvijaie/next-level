@@ -1,0 +1,6 @@
+services:
+  smartgrids_revalidate.jsonapi_cache_subscriber:
+    class: Drupal\smartgrids_revalidate\EventSubscriber\JsonApiCacheSubscriber
+    arguments: ['@page_cache_kill_switch']
+    tags:
+      - { name: event_subscriber }

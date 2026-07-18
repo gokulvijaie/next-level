@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Product teaser: delegates to the reusable product card component.
+ *
+ * The 'card' variable is computed in
+ * smartgrids_theme_preprocess_commerce_product() (smartgrids_theme.theme).
+ * The add-to-cart form comes from the "Variations" field rendered with the
+ * "Add to cart form" formatter on the Teaser display; the image from the
+ * product image field rendered with a Responsive image formatter.
+ *
+ * Adjust the field names below (field_product_image) to your product type.
+ */
+#}
+{% set image = content.field_product_image is defined ? content.field_product_image : null %}
+
+{% include '@smartgrids_theme/components/product-card.html.twig' with {
+  url: card.url,
+  image: image,
+  title: card.title,
+  price: card.price,
+  original_price: card.original_price,
+  discount_percent: card.discount_percent,
+  category: card.category,
+  rating: card.rating,
+  review_count: card.review_count,
+  in_stock: card.in_stock,
+  badge: card.badge,
+  badge_type: card.badge_type,
+  add_to_cart: content.variations is defined ? content.variations : null,
+  product_id: card.product_id,
+  attributes: attributes,
+} only %}

@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Promotional banner component.
+ *
+ * Usage (e.g. from a custom block template for a "Promo banner" block type):
+ *
+ * {% include '@smartgrids_theme/components/promo-banner.html.twig' with {
+ *   eyebrow: 'Limited time'|t,
+ *   title: content.field_banner_title,
+ *   text: content.field_banner_text,
+ *   link_url: url,
+ *   link_text: 'Shop the sale'|t,
+ *   media: content.field_banner_image,
+ * } only %}
+ */
+#}
+<section class="promo-banner">
+  {% if media %}
+    <div class="promo-banner__media">{{ media }}</div>
+  {% endif %}
+  <div class="promo-banner__content">
+    {% if eyebrow %}
+      <p class="promo-banner__eyebrow">{{ eyebrow }}</p>
+    {% endif %}
+    {% if title %}
+      <h2 class="promo-banner__title">{{ title }}</h2>
+    {% endif %}
+    {% if text %}
+      <div class="promo-banner__text">{{ text }}</div>
+    {% endif %}
+    {% if link_url and link_text %}
+      <a class="sg-btn" href="{{ link_url }}">{{ link_text }}</a>
+    {% endif %}
+  </div>
+</section>

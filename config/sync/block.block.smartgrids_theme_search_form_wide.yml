@@ -1,0 +1,23 @@
+uuid: acab0256-5798-4bae-bc2f-bd2dc567e203
+langcode: en
+status: true
+dependencies:
+  module:
+    - search
+  theme:
+    - smartgrids_theme
+_core:
+  default_config_hash: pbbed0hdqGDF-_QWVVTWRAwgDIotFuAvWH5mWUZu0fA
+id: smartgrids_theme_search_form_wide
+theme: smartgrids_theme
+region: header_top
+weight: -5
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: 'Search form (wide)'
+  label_display: '0'
+  provider: search
+  page_id: null
+visibility: {  }

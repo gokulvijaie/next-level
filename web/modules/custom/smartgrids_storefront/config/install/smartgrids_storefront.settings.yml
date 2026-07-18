@@ -1,0 +1,17 @@
+# Storefront behaviour. All of this is admin-editable configuration —
+# the Next.js frontend reads it via the stats/rates endpoints and never
+# hard-codes any of these values.
+show_purchase_count: true
+show_download_count: true
+show_ratings: true
+purchase_label: '@count sold'
+download_label: '@count downloads'
+# Reviews
+allow_guest_reviews: true
+auto_publish_reviews: false
+reviews_require_purchase: false
+# Digital downloads
+max_downloads_per_order: 10
+# Exchange rates
+rates_api: 'https://api.frankfurter.app/latest'
+rates_refresh_seconds: 21600
